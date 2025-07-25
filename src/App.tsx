@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 
-const App = ()=> {
-    return(
+const App = () => {
+    return (
         <View>
             <Text>TESTANDO</Text>
         </View>
@@ -9,3 +9,6 @@ const App = ()=> {
 };
 
 export default App;
+
+
+
