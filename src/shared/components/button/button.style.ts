@@ -1,4 +1,6 @@
 import styled from 'styled-components/native';
+import LinearGradient from 'react-native-linear-gradient';
+import { theme } from '../themes/theme';
 
 interface ButtonContainerProps {
   margin?: string;
@@ -12,5 +14,19 @@ export const ButtonContainer = styled.TouchableOpacity<ButtonContainerProps>`
   align-items: center;
   ${(props: { margin: any; }) => (props.margin ? `margin: ${props.margin};` : '')}
 
-  background-color: blue;
+  `;
+
+export const GradientButton = styled(LinearGradient) <ButtonContainerProps>`
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  justify-content: center;
+  align-items: center;
+  margin: ${(props: ButtonContainerProps) => props.margin || '0'};
+`;
+
+export const ButtonSecondary = styled(ButtonContainer) <ButtonContainerProps>`
+  margin: ${(props: ButtonContainerProps) => props.margin || '0'};
+  border-width: 1px;
+  border-color: ${theme.colors.mainTheme.primary};
 `;
