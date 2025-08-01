@@ -3,13 +3,15 @@ import { TextProps as TextPropsNative } from 'react-native';
 
 import { ContainerText } from './text.style';
 import { textTypes } from './textTypes';
+import { theme } from '../../themes/theme';
 
 interface TextProps extends TextPropsNative {
     color?: string;
     type?: string;
+    margin?: string;
 }
 
-const Text = ({ color, type, ...props }: TextProps) => {
+const Text = ({ margin, color, type, ...props }: TextProps) => {
     const fontSize = useMemo(() => {
         switch (type) {
             case textTypes.TITLE_BOLD:
@@ -71,7 +73,15 @@ const Text = ({ color, type, ...props }: TextProps) => {
         }
     }, [type]);
 
-    return <ContainerText fontFamily={fontFamily} fontSize={fontSize} color={color} {...props} />;
+    return (
+        <ContainerText
+            customMargin={margin}
+            fontFamily={fontFamily}
+            fontSize={fontSize}
+            color={color}
+            {...props}
+        />
+    );
 };
 
 

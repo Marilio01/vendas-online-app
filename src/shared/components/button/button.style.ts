@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 import LinearGradient from 'react-native-linear-gradient';
-import { theme } from '../themes/theme';
+import { theme } from '../../themes/theme';
 
 interface ButtonContainerProps {
   margin?: string;
