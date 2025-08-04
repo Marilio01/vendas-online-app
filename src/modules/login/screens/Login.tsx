@@ -3,9 +3,10 @@ import Button from '../../../shared/components/button/Button';
 import Input from '../../../shared/components/input/Input';
 import { ContainerLogin, Imagelogo } from '../styles/login.style';
 import { theme } from '../../../shared/themes/theme';
+import axios from 'axios';
 
 const Login = () => {
-    const handleOnPress = () => {
+    const handleOnPress = async () => {
         console.log('clicou');
     };
     return (
