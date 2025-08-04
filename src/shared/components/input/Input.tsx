@@ -1,19 +1,26 @@
-import { TextInputProps } from 'react-native';
+import { useState } from 'react';
+import { TextInputProps, View } from 'react-native';
 
 import { theme } from '../../themes/theme';
 import { DisplayFlexColumn } from '../globalStyles/globalView.style';
 import Text from '../text/Text';
 import { textTypes } from '../text/textTypes';
-import { ContainerInput } from './input.style';
-
+import { ContainerInput, IconEye } from './input.style';
 interface InputProps extends TextInputProps {
     title?: string;
     errorMessage?: string;
+    secureTextEntry?: boolean;
+    margin?: string;
 }
 
-const Input = ({ title, errorMessage, ...props }: InputProps) => {
+const Input = ({ margin, secureTextEntry, title, errorMessage, ...props }: InputProps) => {
+    const [currentSecure, setCurrentSecure] = useState<boolean>(!!secureTextEntry);
+
+    const handleOnPressEye = () => {
+        setCurrentSecure((current) => !current);
+    };
     return (
-        <DisplayFlexColumn>
+        <DisplayFlexColumn customMargin={margin}>
             {title && (
                 <Text
                     margin="0px 0px 4px 8px"
@@ -23,10 +30,22 @@ const Input = ({ title, errorMessage, ...props }: InputProps) => {
                     {title}
                 </Text>
             )}
-            <ContainerInput
-                placeholderTextColor={theme.colors.grayTheme.gray80}
-                isError={!!errorMessage}
-                {...props} />
+            <View>
+                <ContainerInput
+                    placeholderTextColor={theme.colors.grayTheme.gray80}
+                    hasSecureTextEntry={secureTextEntry}
+                    secureTextEntry={currentSecure}
+                    isError={!!errorMessage}
+                    {...props}
+                />
+                {secureTextEntry && (
+                    <IconEye
+                        onPress={handleOnPressEye}
+                        name={currentSecure ? 'eye' : 'eye-blocked'}
+                        size={20}
+                    />
+                )}
+            </View>
             {errorMessage && (
                 <Text
                     margin="0px 0px 0px 8px"
