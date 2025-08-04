@@ -3,20 +3,41 @@ import Button from '../../../shared/components/button/Button';
 import Input from '../../../shared/components/input/Input';
 import { ContainerLogin, Imagelogo } from '../styles/login.style';
 import { theme } from '../../../shared/themes/theme';
-import axios from 'axios';
+import { useLogin } from '../hooks/useLogin';
 
 const Login = () => {
-    const handleOnPress = async () => {
-        console.log('clicou');
-    };
+    const {
+        email,
+        password,
+        loading,
+        errorMessage,
+        handleOnPress,
+        handleOnChangeEmail,
+        handleOnChangePassword,
+    } = useLogin();
     return (
         <View>
             <ContainerLogin>
                 <Imagelogo resizeMode="contain" source={require('../../../assets/images/logo.jpg')} />
-                <Input margin="0px 0px 8px 0px" placeholder="Digite seu email" title="Email:" />
-                <Input secureTextEntry placeholder="Digite sua senha" title="Senha:" />
+                <Input
+                    value={email}
+                    errorMessage={errorMessage}
+                    margin="0px 0px 8px 0px"
+                    placeholder="Digite seu email"
+                    title="Email:"
+                    onChange={handleOnChangeEmail}
+                />
+                <Input
+                    errorMessage={errorMessage}
+                    value={password}
+                    secureTextEntry
+                    placeholder="Digite sua senha"
+                    title="Senha:"
+                    onChange={handleOnChangePassword}
+                />
                 <Button
                     type={theme.buttons.buttonsTheme.primary}
+                    loading={loading}
                     margin="16px"
                     title="ENTRAR"
 
