@@ -1,7 +1,7 @@
 import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { NativeSyntheticEvent, TextInputChangeEventData } from 'react-native';
-
+import { removeSpecialCharacters } from '../../../shared/functions/characters';
 import { MethodEnum } from '../../../enums/methods.enum';
 import { URL_USER } from '../../../shared/constants/urls';
 import { MenuUrl } from '../../../shared/enums/MenuUrl.enum';
@@ -43,7 +43,11 @@ export const useCreateUser = () => {
         const resultCreateUser = await request({
             url: URL_USER,
             method: MethodEnum.POST,
-            body: createUser,
+            body: {
+                ...createUser,
+                phone: removeSpecialCharacters(createUser.phone),
+                cpf: removeSpecialCharacters(createUser.cpf),
+            },
             message: 'Usuário cadastrado com sucesso!',
         });
 
