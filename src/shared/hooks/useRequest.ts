@@ -5,9 +5,10 @@ import { useGlobalReducer } from '../../store/reducers/globalReducer/useGlobalRe
 import { connectionAPIPost } from '../functions/connection/connectionAPI';
 import { RequestLogin } from '../types/requestLogin';
 import { ReturnLogin } from '../types/returnLogin';
+import { MenuUrl } from '../enums/MenuUrl.enum';
 
 export const useRequest = () => {
-    const { navigate } = useNavigation<NavigationProp<ParamListBase>>();
+    const { reset } = useNavigation<NavigationProp<ParamListBase>>();
     const { setUser } = useUserReducer();
     const { setModal } = useGlobalReducer();
     const [loading, setLoading] = useState<boolean>(false);
@@ -18,7 +19,10 @@ export const useRequest = () => {
         await connectionAPIPost<ReturnLogin>('http://192.168.1.9:8080/auth', body)
             .then((result) => {
                 setUser(result.user);
-                navigate('Home');
+                reset({
+                    index: 0,
+                    routes: [{ name: MenuUrl.HOME }],
+                });
             })
             .catch(() => {
                 setModal({
