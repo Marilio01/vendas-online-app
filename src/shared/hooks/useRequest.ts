@@ -2,6 +2,7 @@ import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/
 import { useState } from 'react';
 import { useUserReducer } from '../../store/reducers/userReducer/useUserReducer';
 import { useGlobalReducer } from '../../store/reducers/globalReducer/useGlobalReducer';
+import { setAuthorizationToken } from '../functions/connection/auth';
 import { connectionAPIPost } from '../functions/connection/connectionAPI';
 import { RequestLogin } from '../types/requestLogin';
 import { ReturnLogin } from '../types/returnLogin';
@@ -18,6 +19,7 @@ export const useRequest = () => {
         setLoading(true);
         await connectionAPIPost<ReturnLogin>('http://192.168.1.9:8080/auth', body)
             .then((result) => {
+                setAuthorizationToken(result.accessToken);
                 setUser(result.user);
                 reset({
                     index: 0,
