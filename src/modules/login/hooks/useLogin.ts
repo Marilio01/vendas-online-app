@@ -1,11 +1,12 @@
-
+import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
 import { useState } from 'react';
 import { NativeSyntheticEvent, TextInputChangeEventData } from 'react-native';
 
+import { MenuUrl } from '../../../shared/enums/MenuUrl.enum';
 import { useRequest } from '../../../shared/hooks/useRequest';
 
 export const useLogin = () => {
-
+    const { navigate } = useNavigation<NavigationProp<ParamListBase>>();
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const { authRequest, errorMessage, loading, setErrorMessage } = useRequest();
@@ -16,6 +17,11 @@ export const useLogin = () => {
             password,
         });
     };
+
+    const handleGoToCreateUser = () => {
+        navigate(MenuUrl.CREATE_USER);
+    };
+
 
     const handleOnChangeEmail = (event: NativeSyntheticEvent<TextInputChangeEventData>) => {
         setErrorMessage('');
@@ -35,5 +41,6 @@ export const useLogin = () => {
         handleOnPress,
         handleOnChangeEmail,
         handleOnChangePassword,
+        handleGoToCreateUser,
     };
 };
