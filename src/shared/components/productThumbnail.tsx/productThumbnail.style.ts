@@ -13,7 +13,7 @@ export const ProductThumbnailContainer = styled.TouchableOpacity<ContainerProps>
   border: 1px solid ${theme.colors.grayTheme.gray80};
   padding: 8px;
 
-  margin: ${(props:ContainerProps) => props.margin || '0px'};
+  margin: ${(props: ContainerProps) => props.margin || '0px'};
 `;
 
 export const ProductImage = styled.Image`
@@ -22,4 +22,19 @@ export const ProductImage = styled.Image`
   margin-bottom: 8px;
 
   border-radius: 4px;
+`;
+
+export const ProductInsertCart = styled.TouchableOpacity`
+  width: 134px;
+  height: 35px;
+  background-color: ${theme.colors.mainTheme.primary};
+  align-items: center;
+  justify-content: center;
+
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px;
 `;
