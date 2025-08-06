@@ -1,16 +1,22 @@
-import { FlatList, View } from 'react-native';
-import { useEffect } from 'react';
+import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
+import { useEffect, useState } from 'react';
+import { FlatList, NativeSyntheticEvent, TextInputChangeEventData, View } from 'react-native';
 import { MethodEnum } from '../../../enums/methods.enum';
-import Text from "../../../shared/components/text/Text";
+import { DisplayFlexColumn } from '../../../shared/components/globalStyles/globalView.style';
+import Input from '../../../shared/components/input/Input';
+import { MenuUrl } from '../../../shared/enums/MenuUrl.enum';
 import { URL_PRODUCT } from '../../../shared/constants/urls';
 import { useRequest } from '../../../shared/hooks/useRequest';
 import { ProductType } from '../../../shared/types/productType';
 import { useProductReducer } from '../../../store/reducers/productReducer/useProductReducer';
 import ProductThumbnail from '../../../shared/components/productThumbnail.tsx/ProductThumbnail';
+import { HomeContainer } from '../styles/home.style';
 
 
 
 const Home = () => {
+    const [search, setSearch] = useState('');
+    const { navigate } = useNavigation<NavigationProp<ParamListBase>>();
     const { request } = useRequest();
     const { products, setProducts } = useProductReducer();
 
@@ -22,11 +28,28 @@ const Home = () => {
         });
     }, []);
 
+    const handleGoToProduct = () => {
+        navigate(MenuUrl.SEARCH_PRODUCT);
+    };
+
+    const handleOnChangeSearch = (event: NativeSyntheticEvent<TextInputChangeEventData>) => {
+        setSearch(event.nativeEvent.text);
+    };
+
 
 
     return (
         <View>
-            <Text>HOME</Text>
+            <HomeContainer>
+                <Input
+                    onPressIconRight={handleGoToProduct}
+                    value={search}
+                    onChange={handleOnChangeSearch}
+                    iconRight="search"
+                />
+            </HomeContainer>
+            <DisplayFlexColumn />
+
             <FlatList
                 horizontal
                 data={products}

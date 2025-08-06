@@ -9,6 +9,7 @@ import Home from './modules/home';
 import Login from './modules/login';
 import Product from './modules/product';
 import Orders from './modules/orders';
+import SearchProduct from './modules/searchProduct';
 import Profile from './modules/profile';
 import Splash from './modules/splash';
 import { Icon } from './shared/components/icon/Icon';
@@ -28,6 +29,9 @@ const TabNavigation = () => {
                 break;
             case MenuUrl.ORDER:
                 iconName = 'books';
+                break;
+            case MenuUrl.SEARCH_PRODUCT:
+                iconName = 'search';
                 break;
             case MenuUrl.CART:
                 iconName = 'cart';
@@ -57,6 +61,11 @@ const TabNavigation = () => {
             })}
         >
             <Tab.Screen name={MenuUrl.HOME} component={Home} options={{ headerShown: false }} />
+            <Tab.Screen
+                name={MenuUrl.SEARCH_PRODUCT}
+                component={SearchProduct}
+                options={{ title: 'Buscar', headerShown: false }}
+            />
             <Tab.Screen
                 name={MenuUrl.CART}
                 component={Cart}
