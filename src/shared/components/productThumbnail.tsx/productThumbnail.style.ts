@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 import { theme } from '../../themes/theme';
 
 interface ContainerProps {
-    margin?: string;
+  margin?: string;
 }
 
 export const ProductThumbnailContainer = styled.TouchableOpacity<ContainerProps>`
@@ -30,6 +30,24 @@ export const ProductInsertCart = styled.TouchableOpacity`
   background-color: ${theme.colors.mainTheme.primary};
   align-items: center;
   justify-content: center;
+
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+`;
+
+
+export const QuantityManagerContainer = styled.View`
+  width: 142px;
+  height: 35px;
+  background-color: ${theme.colors.mainTheme.primary};
+
+  flex-direction: row; 
+  align-items: center;
+  justify-content: space-between; 
 
   position: absolute;
   bottom: 0px;

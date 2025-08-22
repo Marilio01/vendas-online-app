@@ -1,45 +1,34 @@
+
 import { useNavigation } from '@react-navigation/native';
 import { ActivityIndicator } from 'react-native';
-import { MethodEnum } from '../../../enums/methods.enum';
 import { ProductNavigationProp } from '../../../modules/product/screens/Product';
-import { URL_CART } from '../../constants/urls';
 import { MenuUrl } from '../../enums/MenuUrl.enum';
 import { convertNumberToMoney } from '../../functions/money';
 import { theme } from '../../themes/theme';
-import { useRequest } from '../../hooks/useRequest';
 import { ProductType } from '../../types/productType';
 import { Icon } from '../icon/Icon';
 import Text from '../text/Text';
-import { CartRequest } from '../../types/cartRequest';
 import { textTypes } from '../text/textTypes';
+import { useCart } from '../../../modules/cart/hooks/useCart'; // Importe o novo hook completo
+import CartQuantityManager from '../../../modules/cart/screens/CartQuantityManager'; // Importe o novo componente
 import {
     ProductImage,
     ProductInsertCart,
     ProductThumbnailContainer,
 } from './productThumbnail.style';
+
 interface ProductThumbnailProps {
     product: ProductType;
     margin?: string;
 }
 
-const AMOUNT_DEFAULT = 1;
-
-
 const ProductThumbnail = ({ product, margin }: ProductThumbnailProps) => {
     const { navigate } = useNavigation<ProductNavigationProp>();
-    const { request, loading } = useRequest();
 
-    const handleInsertProductInCart = () => {
-        request<unknown, CartRequest>({
-            url: URL_CART,
-            method: MethodEnum.POST,
-            body: {
-                productId: product.id,
-                amount: AMOUNT_DEFAULT,
-            },
-            message: 'Inserido com sucesso!',
-        });
-    };
+    const { cart, insertProductInCart, updateProductAmount, loading } = useCart();
+
+
+    const productInCart = cart?.cartProduct?.find((item) => item.product?.id === product.id);
 
     const handleGoToProduct = () => {
         navigate(MenuUrl.PRODUCT, {
@@ -54,13 +43,23 @@ const ProductThumbnail = ({ product, margin }: ProductThumbnailProps) => {
             <Text color={theme.colors.mainTheme.primary} type={textTypes.PARAGRAPH_SEMI_BOLD}>
                 {convertNumberToMoney(product.price)}
             </Text>
-            <ProductInsertCart onPress={handleInsertProductInCart}>
-                {loading ? (
-                    <ActivityIndicator color={theme.colors.neutralTheme.white} />
-                ) : (
-                    <Icon name="cart" color={theme.colors.neutralTheme.white} />
-                )}
-            </ProductInsertCart>
+
+
+            {productInCart ? (
+                <CartQuantityManager
+                    amount={productInCart.amount}
+                    onIncrease={() => updateProductAmount(productInCart, productInCart.amount + 1)}
+                    onDecrease={() => updateProductAmount(productInCart, productInCart.amount - 1)}
+                />
+            ) : (
+                <ProductInsertCart onPress={() => insertProductInCart(product.id)}>
+                    {loading ? (
+                        <ActivityIndicator color={theme.colors.neutralTheme.white} />
+                    ) : (
+                        <Icon name="cart" color={theme.colors.neutralTheme.white} />
+                    )}
+                </ProductInsertCart>
+            )}
         </ProductThumbnailContainer>
     );
 };

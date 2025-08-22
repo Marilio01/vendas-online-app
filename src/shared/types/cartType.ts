@@ -1,14 +1,7 @@
-import { ProductType } from './productType';
 
-export interface CartProductType {
-    id: number;
-    cartId: number;
-    productId: number;
-    amount: number;
-    product: ProductType;
-}
+import { CartProductType } from './cartProductType';
 
 export interface CartType {
-    id: number;
-    cartProduct: CartProductType;
+  id: number;
+  cartProduct: CartProductType[];
 }
