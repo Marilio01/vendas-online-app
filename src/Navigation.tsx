@@ -15,6 +15,7 @@ import Splash from './modules/splash';
 import { Icon } from './shared/components/icon/Icon';
 import { MenuUrl } from './shared/enums/MenuUrl.enum';
 import { theme } from './shared/themes/theme';
+import CheckoutScreen from './modules/checkout/screens/Chekout';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -102,6 +103,12 @@ const Navigation = () => {
                     name={MenuUrl.HOME}
                     component={TabNavigation}
                     options={{ headerShown: false }}
+                />
+
+                <Stack.Screen
+                    name="Checkout"
+                    component={CheckoutScreen}
+                    options={{ title: 'Revisão do Pedido' }}
                 />
             </Stack.Navigator>
         </NavigationContainer>

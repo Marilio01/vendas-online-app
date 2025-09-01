@@ -19,7 +19,7 @@ interface requestProps<T, B = unknown> {
     message?: string;
 }
 
-export const useRequest = () => {
+export const useRequests = () => {
     const { reset } = useNavigation<NavigationProp<ParamListBase>>();
     const { setUser } = useUserReducer();
     const { setModal } = useGlobalReducer();

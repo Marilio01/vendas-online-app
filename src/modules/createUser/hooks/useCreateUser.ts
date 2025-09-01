@@ -8,12 +8,12 @@ import { MenuUrl } from '../../../shared/enums/MenuUrl.enum';
 import { validateCpf } from '../../../shared/functions/cpf';
 import { validateEmail } from '../../../shared/functions/email';
 import { validatePhone } from '../../../shared/functions/phone';
-import { useRequest } from '../../../shared/hooks/useRequest';
+import { useRequests } from '../../../shared/hooks/useRequests';
 import { CreateUserType } from '../../../shared/types/createUserType';
 
 export const useCreateUser = () => {
     const { reset } = useNavigation<NavigationProp<ParamListBase>>();
-    const { request, loading } = useRequest();
+    const { request, loading } = useRequests();
     const [disabled, setDisabled] = useState<boolean>(true);
     const [createUser, setCreateUser] = useState<CreateUserType>({
         confirmPassword: '',

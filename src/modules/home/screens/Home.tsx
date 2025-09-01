@@ -6,7 +6,7 @@ import { DisplayFlexColumn } from '../../../shared/components/globalStyles/globa
 import Input from '../../../shared/components/input/Input';
 import { MenuUrl } from '../../../shared/enums/MenuUrl.enum';
 import { URL_PRODUCT } from '../../../shared/constants/urls';
-import { useRequest } from '../../../shared/hooks/useRequest';
+import { useRequests } from '../../../shared/hooks/useRequests';
 import { ProductType } from '../../../shared/types/productType';
 import { useProductReducer } from '../../../store/reducers/productReducer/useProductReducer';
 import ProductThumbnail from '../../../shared/components/productThumbnail.tsx/ProductThumbnail';
@@ -18,7 +18,7 @@ import { HomeContainer } from '../styles/home.style';
 const Home = () => {
     const [search, setSearch] = useState('');
     const { navigate } = useNavigation<SearchProductNavigationProp>();
-    const { request } = useRequest();
+    const { request } = useRequests();
     const { products, setProducts } = useProductReducer();
 
     useEffect(() => {

@@ -4,6 +4,7 @@ import cartReducer from './reducers/cartReducer';
 import globalReducer from './reducers/globalReducer';
 import productReducer from './reducers/productReducer';
 import userReducer from './reducers/userReducer';
+import addressReducer from './reducers/addressReducer';
 
 export const store = configureStore({
     reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
         globalReducer,
         productReducer,
         userReducer,
+        addressReducer,
     },
 });
 

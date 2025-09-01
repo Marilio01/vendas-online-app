@@ -5,7 +5,7 @@ import { MethodEnum } from '../../../enums/methods.enum';
 import { URL_USER } from '../../../shared/constants/urls';
 import { MenuUrl } from '../../../shared/enums/MenuUrl.enum';
 import { getAuthorizationToken } from '../../../shared/functions/connection/auth';
-import { useRequest } from '../../../shared/hooks/useRequest';
+import { useRequests } from '../../../shared/hooks/useRequests';
 import { UserType } from '../../../shared/types/userType';
 import { useUserReducer } from '../../../store/reducers/userReducer/useUserReducer';
 import { ContainerSplash, ImagelogoSplash } from '../styles/splash.style';
@@ -14,7 +14,7 @@ const TIME_SLEEP = 2500;
 
 const Splash = () => {
     const { reset } = useNavigation<NavigationProp<ParamListBase>>();
-    const { request } = useRequest();
+    const { request } = useRequests();
     const { setUser } = useUserReducer();
 
     useEffect(() => {

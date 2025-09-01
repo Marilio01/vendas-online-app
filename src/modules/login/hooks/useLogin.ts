@@ -3,13 +3,13 @@ import { useState } from 'react';
 import { NativeSyntheticEvent, TextInputChangeEventData } from 'react-native';
 
 import { MenuUrl } from '../../../shared/enums/MenuUrl.enum';
-import { useRequest } from '../../../shared/hooks/useRequest';
+import { useRequests } from '../../../shared/hooks/useRequests';
 
 export const useLogin = () => {
     const { navigate } = useNavigation<NavigationProp<ParamListBase>>();
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-    const { authRequest, errorMessage, loading, setErrorMessage } = useRequest();
+    const { authRequest, errorMessage, loading, setErrorMessage } = useRequests();
 
     const handleOnPress = async () => {
         authRequest({

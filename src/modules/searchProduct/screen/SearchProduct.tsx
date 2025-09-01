@@ -12,7 +12,7 @@ import Input from '../../../shared/components/input/Input';
 import { ActivityIndicatorButton } from '../../../shared/components/button/button.style';
 import { theme } from '../../../shared/themes/theme';
 import { URL_PRODUCT_PAGE } from '../../../shared/constants/urls';
-import { useRequest } from '../../../shared/hooks/useRequest';
+import { useRequests } from '../../../shared/hooks/useRequests';
 import { PaginationType } from '../../../shared/types/paginationType';
 import { ProductType } from '../../../shared/types/productType';
 import { useProductReducer } from '../../../store/reducers/productReducer/useProductReducer';
@@ -30,7 +30,7 @@ export interface SearchProductParams {
 const SearchProduct = () => {
     const { searchProducts, setSearchProducts, insertSearchProducts } = useProductReducer();
     const { params } = useRoute<RouteProp<Record<string, SearchProductParams>>>();
-    const { request, loading } = useRequest();
+    const { request, loading } = useRequests();
     const [value, setValue] = useState(params?.search || '');
 
     useEffect(() => {

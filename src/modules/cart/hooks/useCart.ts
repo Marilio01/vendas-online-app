@@ -2,14 +2,14 @@
 import { useCallback } from 'react';
 import { MethodEnum } from '../../../enums/methods.enum';
 import { URL_CART } from '../../../shared/constants/urls';
-import { useRequest } from '../../../shared/hooks/useRequest';
+import { useRequests } from '../../../shared/hooks/useRequests';
 import { useCartReducer } from '../../../store/reducers/cartReducer/useCartReducer';
 import { useGlobalReducer } from '../../../store/reducers/globalReducer/useGlobalReducer';
 import { CartProductType } from '../../../shared/types/cartProductType';
 import { CartRequest } from '../../../shared/types/cartRequest';
 
 export const useCart = () => {
-  const { request, loading } = useRequest();
+  const { request, loading } = useRequests();
   const { cart, setCart, updateItemAmount } = useCartReducer();
 
   // Função para buscar o carrinho da API
@@ -36,7 +36,7 @@ export const useCart = () => {
     }
 
     // Atualiza a quantidade no estado local instantaneamente
-    updateItemAmount(cartItem.id, newAmount); 
+    updateItemAmount(cartItem.id, newAmount);
 
     // Envia a requisição para a API em segundo plano
     await request({

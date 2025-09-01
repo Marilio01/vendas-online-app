@@ -28,8 +28,9 @@ const Cart = () => {
         return cartItems.reduce((acc, item) => acc + (item.product.price * item.amount), 0);
     }, [cartItems]);
 
+
     const handleGoToCheckout = () => {
-        navigate(MenuUrl.HOME);
+        navigate('Checkout');
     };
 
     const handleConfirmDelete = () => {
