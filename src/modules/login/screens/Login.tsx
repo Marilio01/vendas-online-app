@@ -1,62 +1,108 @@
-import { TouchableOpacity, View } from 'react-native';
-import Button from '../../../shared/components/button/Button';
-import Input from '../../../shared/components/input/Input';
-import Text from '../../../shared/components/text/Text';
-import { textTypes } from '../../../shared/components/text/textTypes';
-import { ContainerLogin, Imagelogo } from '../styles/login.style';
-import { theme } from '../../../shared/themes/theme';
+import React, { useRef } from 'react';
+import {
+  TouchableOpacity,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TextInput,
+} from 'react-native';
+import { FloatingLabelInput } from '../../../shared/components/floatingLabelInput/FloatingLabelInput';
 import { useLogin } from '../hooks/useLogin';
+import {
+  ContainerLogin,
+  Imagelogo,
+  Title,
+  SignUpContainer,
+  SignUpText,
+  SignUpLink,
+  PrimaryButton,
+  ButtonContainer,
+} from '../styles/login.style';
+import Text from '../../../shared/components/text/Text';
+import { theme } from '../../../shared/themes/theme';
 
 const Login = () => {
-    const {
-        email,
-        password,
-        loading,
-        errorMessage,
-        handleOnPress,
-        handleOnChangeEmail,
-        handleOnChangePassword,
-        handleGoToCreateUser,
-    } = useLogin();
-    return (
-        <View>
-            <ContainerLogin>
-                <Imagelogo resizeMode="contain" source={require('../../../assets/images/logo.jpg')} />
-                <Input
-                    value={email}
-                    errorMessage={errorMessage}
-                    margin="0px 0px 8px 0px"
-                    placeholder="Digite seu email"
-                    title="Email:"
-                    onChange={handleOnChangeEmail}
-                />
-                <Input
-                    errorMessage={errorMessage}
-                    value={password}
-                    secureTextEntry
-                    placeholder="Digite sua senha"
-                    title="Senha:"
-                    onChange={handleOnChangePassword}
-                />
-                <TouchableOpacity onPress={handleGoToCreateUser}>
-                    <Text
-                        margin="16px"
-                        type={textTypes.PARAGRAPH_SEMI_BOLD}
-                        color={theme.colors.mainTheme.primary}
-                    >
-                        Cadastrar usuário
-                    </Text>
-                </TouchableOpacity>
-                <Button
-                    type={theme.buttons.buttonsTheme.primary}
-                    loading={loading}
-                    title="ENTRAR"
+  const {
+    values,
+    errors,
+    showPassword,
+    loading,
+    apiErrorMessage,
+    isFormValid,
+    handleOnPress,
+    handleChange,
+    handleBlur,
+    handleGoToCreateUser,
+    handleToggleShowPassword,
+  } = useLogin();
 
-                    onPress={handleOnPress}
-                />
-            </ContainerLogin>
-        </View>
-    );
+  const passwordInputRef = useRef<TextInput>(null);
+
+  const isButtonDisabled = !isFormValid || loading;
+
+  const handleEmailSubmit = () => {
+    passwordInputRef.current?.focus();
+  };
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1, backgroundColor: theme.colors.neutralTheme.black }}
+    >
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+        keyboardShouldPersistTaps="handled"
+      >
+        <ContainerLogin>
+          <Imagelogo resizeMode="contain" source={require('../../../assets/images/logo.jpg')} />
+          <Title>Acesse sua conta</Title>
+
+          <FloatingLabelInput
+            label="E-mail"
+            value={values.email}
+            onChangeText={(text) => handleChange('email', text)}
+            error={errors.email}
+            onBlur={() => handleBlur('email')}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            returnKeyType="next"
+            onSubmitEditing={handleEmailSubmit}
+          />
+          <FloatingLabelInput
+            ref={passwordInputRef}
+            label="Senha"
+            value={values.password}
+            onChangeText={(text) => handleChange('password', text)}
+            error={errors.password}
+            onBlur={() => handleBlur('password')}
+            isPasswordInput={true}
+            secureTextEntry={!showPassword}
+            onToggleVisibility={handleToggleShowPassword}
+            returnKeyType="done"
+            onSubmitEditing={!isButtonDisabled ? handleOnPress : undefined}
+          />
+
+          <ButtonContainer>
+            <PrimaryButton onPress={handleOnPress} disabled={isButtonDisabled}>
+              {loading ? (
+                <ActivityIndicator color={theme.colors.neutralTheme.white} />
+              ) : (
+                <Text style={{ color: theme.colors.neutralTheme.white, fontWeight: 'bold' }}>Entrar</Text>
+              )}
+            </PrimaryButton>
+          </ButtonContainer>
+
+          <SignUpContainer>
+            <SignUpText>Não tem conta?</SignUpText>
+            <TouchableOpacity onPress={handleGoToCreateUser}>
+              <SignUpLink>Cadastre-se</SignUpLink>
+            </TouchableOpacity>
+          </SignUpContainer>
+        </ContainerLogin>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
 };
 
 export default Login;
