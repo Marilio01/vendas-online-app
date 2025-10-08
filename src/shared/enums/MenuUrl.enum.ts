@@ -8,4 +8,5 @@ export enum MenuUrl {
     PRODUCT = 'Product',
     CART = 'Cart',
     SEARCH_PRODUCT = 'SearchProduct',
+    FIRST_SCREEN = 'FirstScreen',
 }

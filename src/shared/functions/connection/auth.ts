@@ -15,6 +15,6 @@ export const logout = (navigate: NavigationProp<ParamListBase>) => {
   unsetAuthorizationToken();
   navigate.reset({
     index: 0,
-    routes: [{ name: MenuUrl.LOGIN }],
+    routes: [{ name: MenuUrl.FIRST_SCREEN }],
   });
 };

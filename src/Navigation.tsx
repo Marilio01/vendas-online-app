@@ -17,6 +17,7 @@ import { MenuUrl } from './shared/enums/MenuUrl.enum';
 import { theme } from './shared/themes/theme';
 import CheckoutScreen from './modules/checkout/screens/Chekout';
 import CreateAddressScreen from './modules/address/screens/CreateAddress';
+import { FirstScreen } from './modules/firstScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -131,7 +132,11 @@ const Navigation = () => {
                     component={CreateAddressScreen} 
                     options={{ title: 'Cadastro de Endereço' }}
                 />
-
+                <Stack.Screen 
+                    name="FirstScreen" 
+                    component={FirstScreen} 
+                    options={{ headerShown: false }}
+                />
             </Stack.Navigator>
         </NavigationContainer>
     );

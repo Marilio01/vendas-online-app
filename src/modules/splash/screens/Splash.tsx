@@ -9,6 +9,7 @@ import { useRequests } from '../../../shared/hooks/useRequests';
 import { UserType } from '../../../shared/types/userType';
 import { useUserReducer } from '../../../store/reducers/userReducer/useUserReducer';
 import { ContainerSplash, ImagelogoSplash } from '../styles/splash.style';
+import { FirstScreen } from '../../firstScreen';
 
 const TIME_SLEEP = 2500;
 
@@ -45,7 +46,7 @@ const Splash = () => {
             } else {
                 reset({
                     index: 0,
-                    routes: [{ name: MenuUrl.LOGIN }],
+                    routes: [{ name: MenuUrl.FIRST_SCREEN }],
                 });
             }
         };
