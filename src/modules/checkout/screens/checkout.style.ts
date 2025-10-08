@@ -1,4 +1,3 @@
-// Em: src/modules/checkout/screens/checkout.style.ts
 import { StyleSheet } from 'react-native';
 import { theme } from '../../../shared/themes/theme';
 
@@ -30,11 +29,13 @@ export const styles = StyleSheet.create({
     addressItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 12,
-        borderWidth: 1,
-        borderColor: theme.colors.grayTheme.gray80,
-        borderRadius: 8,
-        marginBottom: 8,
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#eee', 
+        marginBottom: 0,
+    },
+    lastAddressItem: {
+        borderBottomWidth: 0,
     },
     selectedAddressItem: {
         borderColor: theme.colors.mainTheme.primary,
