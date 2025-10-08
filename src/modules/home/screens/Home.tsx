@@ -1,65 +1,74 @@
-import { useNavigation } from '@react-navigation/native';
-import { useEffect, useState } from 'react';
-import { FlatList, NativeSyntheticEvent, TextInputChangeEventData, View } from 'react-native';
-import { MethodEnum } from '../../../enums/methods.enum';
-import { DisplayFlexColumn } from '../../../shared/components/globalStyles/globalView.style';
+import { SectionList, View, ActivityIndicator, FlatList, SafeAreaView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context'; 
 import Input from '../../../shared/components/input/Input';
-import { MenuUrl } from '../../../shared/enums/MenuUrl.enum';
-import { URL_PRODUCT } from '../../../shared/constants/urls';
-import { useRequests } from '../../../shared/hooks/useRequests';
-import { ProductType } from '../../../shared/types/productType';
-import { useProductReducer } from '../../../store/reducers/productReducer/useProductReducer';
 import ProductThumbnail from '../../../shared/components/productThumbnail.tsx/ProductThumbnail';
-import { SearchProductNavigationProp } from '../../searchProduct/screen/SearchProduct';
+import Text from '../../../shared/components/text/Text';
+import { theme } from '../../../shared/themes/theme';
+import { useHome, GroupedProduct } from '../hooks/useHome';
 import { HomeContainer } from '../styles/home.style';
-
-
+import { ProductType } from '../../../shared/types/ProductType';
 
 const Home = () => {
-    const [search, setSearch] = useState('');
-    const { navigate } = useNavigation<SearchProductNavigationProp>();
-    const { request } = useRequests();
-    const { products, setProducts } = useProductReducer();
+  const {
+    search,
+    loading,
+    groupedProducts,
+    handleOnChangeSearch,
+    handleGoToSearchProduct,
+  } = useHome();
+  
+  const insets = useSafeAreaInsets();
 
-    useEffect(() => {
-        request<ProductType[]>({
-            url: URL_PRODUCT,
-            method: MethodEnum.GET,
-            saveGlobal: setProducts,
-        });
-    }, []);
+  const renderProduct = ({ item }: { item: ProductType }) => (
+    <View style={{ marginHorizontal: 8 }}>
+      <ProductThumbnail product={item} />
+    </View>
+  );
 
-    const handleGoToProduct = () => {
-        navigate(MenuUrl.SEARCH_PRODUCT, {
-            search,
-        });
-    };
+  const renderSectionHeader = ({ section }: { section: GroupedProduct }) => (
+    <Text style={{ fontSize: 22, fontWeight: 'bold', padding: 16}}>
+      {section.title}
+    </Text>
+  );
 
-    const handleOnChangeSearch = (event: NativeSyntheticEvent<TextInputChangeEventData>) => {
-        setSearch(event.nativeEvent.text);
-    };
+  return (
+    <SafeAreaView style={{ 
+        flex: 1, 
+        backgroundColor: theme.colors.neutralTheme.white,
+        paddingTop: insets.top
+    }}>
+      <HomeContainer>
+        <Input
+          value={search}
+          onChange={handleOnChangeSearch}
+          onPressIconRight={handleGoToSearchProduct}
+          iconRight="search"
+          placeholder="Pesquisar produto"
+        />
+      </HomeContainer>
 
-
-
-    return (
-        <View>
-            <HomeContainer>
-                <Input
-                    onPressIconRight={handleGoToProduct}
-                    value={search}
-                    onChange={handleOnChangeSearch}
-                    iconRight="search"
-                />
-            </HomeContainer>
-            <DisplayFlexColumn />
-
+      {loading ? (
+        <ActivityIndicator style={{ marginTop: 32 }} size="large" color={theme.colors.mainTheme.primary} />
+      ) : (
+        <SectionList
+          sections={groupedProducts}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ section }) => (
             <FlatList
-                horizontal
-                data={products}
-                renderItem={({ item }) => <ProductThumbnail margin="0px 8px" product={item} />}
+              horizontal
+              data={section.data}
+              renderItem={renderProduct}
+              keyExtractor={(item) => item.id.toString()}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 8 }}
             />
-        </View>
-    );
+          )}
+          renderSectionHeader={renderSectionHeader}
+          contentContainerStyle={{ paddingBottom: 100 }}
+        />
+      )}
+    </SafeAreaView>
+  );
 };
 
 export default Home;

@@ -5,6 +5,7 @@ import globalReducer from './reducers/globalReducer';
 import productReducer from './reducers/productReducer';
 import userReducer from './reducers/userReducer';
 import addressReducer from './reducers/addressReducer';
+import categoryReducer from './reducers/categoryReducer';
 
 export const store = configureStore({
     reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
         productReducer,
         userReducer,
         addressReducer,
+        categoryReducer,
     },
 });
 
