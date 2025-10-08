@@ -1,91 +1,160 @@
-import { useRef } from 'react';
-import { TextInput } from 'react-native';
-
-import Button from '../../../shared/components/button/Button';
-import Input from '../../../shared/components/input/Input';
+import React, { useRef } from 'react';
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  SafeAreaView,
+} from 'react-native';
+import { FloatingLabelInput } from '../../../shared/components/floatingLabelInput/FloatingLabelInput';
+import Text from '../../../shared/components/text/Text';
 import { useCreateUser } from '../hooks/useCreateUser';
-import { CreateUserContainer } from '../styles/createUser.style';
+import {
+  ContainerCreateUser,
+  Imagelogo,
+  Title,
+  BottomLinkContainer,
+  BottomText,
+  BottomLink,
+  PrimaryButton,
+  ButtonContainer,
+} from '../styles/createUser.style';
+import { theme } from '../../../shared/themes/theme';
 
 const CreateUser = () => {
-    const { createUser, disabled, loading, handleOnChangeInput, handleCreateUser } = useCreateUser();
+  const {
+    values,
+    errors,
+    loading,
+    isFormValid,
+    showPassword,
+    showConfirmPassword,
+    handleChange,
+    handleBlur,
+    handleCreateUser,
+    setShowPassword,
+    setShowConfirmPassword,
+    handleGoToLogin,
+  } = useCreateUser();
 
-    const phoneInput = useRef<TextInput>(null);
-    const emailInput = useRef<TextInput>(null);
-    const cpfInput = useRef<TextInput>(null);
-    const passwordInput = useRef<TextInput>(null);
-    const confirmPasswordInput = useRef<TextInput>(null);
+  const phoneRef = useRef<TextInput>(null);
+  const emailRef = useRef<TextInput>(null);
+  const cpfRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInput>(null);
+  const confirmPasswordRef = useRef<TextInput>(null);
 
-    return (
-        <CreateUserContainer>
-            <Input
-                value={createUser.name}
-                onChange={(event) => handleOnChangeInput(event, 'name')}
-                margin="0px 0px 16px 0px"
-                placeholder="Digite"
-                title="Nome completo:"
-                onSubmitEditing={() => phoneInput?.current?.focus()}
+  const isButtonDisabled = !isFormValid || loading;
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.neutralTheme.black }}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <ContainerCreateUser>
+            <Imagelogo resizeMode="contain" source={require('../../../assets/images/logo.jpg')} />
+            <Title>Crie sua conta</Title>
+
+            <FloatingLabelInput
+              label="Nome"
+              value={values.name}
+              onChangeText={(text) => handleChange('name', text)}
+              onBlur={() => handleBlur('name')}
+              error={errors.name}
+              returnKeyType="next"
+              onSubmitEditing={() => phoneRef.current?.focus()}
             />
-            <Input
-                value={createUser.phone}
-                onChange={(event) => handleOnChangeInput(event, 'phone')}
-                margin="0px 0px 16px 0px"
-                placeholder="Digite"
-                type="cel-phone"
-                title="Telefone:"
-                ref={phoneInput}
-                onSubmitEditing={() => emailInput?.current?.focus()}
-                keyboardType="number-pad"
+            <FloatingLabelInput
+              ref={phoneRef}
+              label="Telefone"
+              type="cel-phone"
+              value={values.phone}
+              maxLength={15}
+              onChangeText={(text) => handleChange('phone', text)}
+              onBlur={() => handleBlur('phone')}
+              error={errors.phone}
+              returnKeyType="next"
+              onSubmitEditing={() => emailRef.current?.focus()}
             />
-            <Input
-                value={createUser.email}
-                onChange={(event) => handleOnChangeInput(event, 'email')}
-                margin="0px 0px 16px 0px"
-                placeholder="Digite"
-                title="Email:"
-                ref={emailInput}
-                onSubmitEditing={() => cpfInput?.current?.focus()}
-                keyboardType="email-address"
+            <FloatingLabelInput
+              ref={emailRef}
+              label="E-mail"
+              value={values.email}
+              onChangeText={(text) => handleChange('email', text)}
+              onBlur={() => handleBlur('email')}
+              error={errors.email}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              returnKeyType="next"
+              onSubmitEditing={() => cpfRef.current?.focus()}
             />
-            <Input
-                value={createUser.cpf}
-                onChange={(event) => handleOnChangeInput(event, 'cpf')}
-                margin="0px 0px 16px 0px"
-                placeholder="Digite"
-                type="cpf"
-                title="CPF:"
-                ref={cpfInput}
-                onSubmitEditing={() => passwordInput?.current?.focus()}
-                keyboardType="number-pad"
+            <FloatingLabelInput
+              ref={cpfRef}
+              label="CPF"
+              type="cpf"
+              value={values.cpf}
+              maxLength={14}
+              onChangeText={(text) => handleChange('cpf', text)}
+              onBlur={() => handleBlur('cpf')}
+              error={errors.cpf}
+              returnKeyType="next"
+              onSubmitEditing={() => passwordRef.current?.focus()}
             />
-            <Input
-                value={createUser.password}
-                onChange={(event) => handleOnChangeInput(event, 'password')}
-                margin="0px 0px 16px 0px"
-                placeholder="Digite "
-                title="Senha:"
-                secureTextEntry
-                ref={passwordInput}
-                onSubmitEditing={() => confirmPasswordInput?.current?.focus()}
+            <FloatingLabelInput
+              ref={passwordRef}
+              label="Senha"
+              value={values.password}
+              onChangeText={(text) => handleChange('password', text)}
+              onBlur={() => handleBlur('password')}
+              error={errors.password}
+              isPasswordInput={true}
+              secureTextEntry={showPassword}
+              onToggleVisibility={() => setShowPassword((prev) => !prev)}
+              returnKeyType="next"
+              onSubmitEditing={() => confirmPasswordRef.current?.focus()}
             />
-            <Input
-                value={createUser.confirmPassword}
-                onChange={(event) => handleOnChangeInput(event, 'confirmPassword')}
-                margin="0px 0px 16px 0px"
-                placeholder="Digite"
-                title="Confirmar senha:"
-                secureTextEntry
-                ref={confirmPasswordInput}
-                onSubmitEditing={handleCreateUser}
+            <FloatingLabelInput
+              ref={confirmPasswordRef}
+              label="Confirme a Senha"
+              value={values.confirmPassword}
+              onChangeText={(text) => handleChange('confirmPassword', text)}
+              onBlur={() => handleBlur('confirmPassword')}
+              error={errors.confirmPassword}
+              isPasswordInput={true}
+              secureTextEntry={showConfirmPassword}
+              onToggleVisibility={() => setShowConfirmPassword((prev) => !prev)}
+              returnKeyType="done"
+              onSubmitEditing={!isButtonDisabled ? handleCreateUser : undefined}
             />
-            <Button
-                disabled={disabled}
-                onPress={handleCreateUser}
-                loading={loading}
-                margin="0px 0px 32px 0px"
-                title="Criar usuário"
-            />
-        </CreateUserContainer>
-    );
+
+            <ButtonContainer>
+              <PrimaryButton onPress={handleCreateUser} disabled={isButtonDisabled}>
+                {loading ? (
+                  <ActivityIndicator color = {theme.colors.neutralTheme.white} />
+                ) : (
+                  <Text style={{ color: theme.colors.neutralTheme.white, fontWeight: 'bold' }}>Cadastrar</Text>
+                )}
+              </PrimaryButton>
+            </ButtonContainer>
+
+            <BottomLinkContainer>
+              <BottomText>Já tem uma conta?</BottomText>
+              <TouchableOpacity onPress={handleGoToLogin}>
+                <BottomLink>Entre</BottomLink>
+              </TouchableOpacity>
+            </BottomLinkContainer>
+          </ContainerCreateUser>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
 };
 
 export default CreateUser;
