@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 import { theme } from '../../themes/theme';
 import { Icon } from '../icon/Icon';
+import { ActivityIndicator } from 'react-native';
 
 interface ContainerInputProps {
   isError?: boolean;
@@ -34,4 +35,10 @@ export const IconSearch = styled(Icon)`
   position: absolute;
   right: 16px;
   top: 12px;
+`;
+
+export const LoadingIndicator = styled(ActivityIndicator)`
+    position: absolute;
+    right: 16px;
+    top: 18px;
 `;

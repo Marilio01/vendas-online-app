@@ -1,5 +1,6 @@
 import { forwardRef, useState } from 'react';
 import {
+    ActivityIndicator,
     NativeSyntheticEvent,
     TextInput,
     TextInputChangeEventData,
@@ -13,7 +14,8 @@ import { theme } from '../../themes/theme';
 import { DisplayFlexColumn } from '../globalStyles/globalView.style';
 import Text from '../text/Text';
 import { textTypes } from '../text/textTypes';
-import { ContainerInput, IconEye, IconSearch } from './input.style';
+import { ContainerInput, IconEye, IconSearch, LoadingIndicator } from './input.style';
+
 interface InputProps extends TextInputProps {
     title?: string;
     errorMessage?: string;
@@ -22,6 +24,7 @@ interface InputProps extends TextInputProps {
     type?: 'cel-phone' | 'cpf';
     iconRight?: string;
     onPressIconRight?: () => void;
+    loading?: boolean;
 }
 
 const Input = forwardRef<TextInput, InputProps>(
@@ -35,6 +38,7 @@ const Input = forwardRef<TextInput, InputProps>(
             type,
             iconRight,
             onPressIconRight,
+            loading,
             ...props
         }: InputProps,
         ref,
@@ -82,6 +86,7 @@ const Input = forwardRef<TextInput, InputProps>(
                 )}
                 <View>
                     <ContainerInput
+                        placeholderTextColor={theme.colors.grayTheme.gray80}
                         {...props}
                         hasSecureTextEntry={secureTextEntry}
                         secureTextEntry={currentSecure}
@@ -89,14 +94,21 @@ const Input = forwardRef<TextInput, InputProps>(
                         onChange={handleOnChange}
                         ref={ref}
                     />
-                    {secureTextEntry && (
-                        <IconEye
-                            onPress={handleOnPressEye}
-                            name={currentSecure ? 'eye' : 'eye-blocked'}
-                            size={20}
-                        />
+                    
+                    {loading ? (
+                        <LoadingIndicator color={theme.colors.neutralTheme.black} />
+                    ) : (
+                        <>
+                            {secureTextEntry && (
+                                <IconEye
+                                    onPress={handleOnPressEye}
+                                    name={currentSecure ? 'eye' : 'eye-blocked'}
+                                    size={20}
+                                />
+                            )}
+                            {iconRight && <IconSearch name="search" size={14} onPress={onPressIconRight} />}
+                        </>
                     )}
-                    {iconRight && <IconSearch name="search" size={14} onPress={onPressIconRight} />}
                 </View>
                 {errorMessage && (
                     <Text
