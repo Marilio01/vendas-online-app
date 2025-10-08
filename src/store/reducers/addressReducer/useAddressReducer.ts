@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux';
-import { AddressType } from '../../../shared/types/AddressType';
 import { useAppSelector } from '../../hooks';
-import { setAddressesAction } from '.';
+import { setAddressesAction } from './index';
+import { AddressType } from '../../../shared/types/AddressType';
 
 export const useAddressReducer = () => {
   const dispatch = useDispatch();

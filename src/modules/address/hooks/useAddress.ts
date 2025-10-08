@@ -1,5 +1,4 @@
-// Em: src/modules/address/hooks/useAddress.ts
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRequests } from '../../../shared/hooks/useRequests';
 import { useAddressReducer } from '../../../store/reducers/addressReducer/useAddressReducer';
 import { AddressType, CreateAddressType } from '../../../shared/types/AddressType';
@@ -13,16 +12,29 @@ export const useAddress = () => {
 
   const fetchAddresses = useCallback(async () => {
     setAddressLoading(true);
-    await request({
-        url: URL_ADDRESS, 
-        method: MethodEnum.GET, 
-        saveGlobal: setAddresses
-    }).finally(() => setAddressLoading(false));
+    const result = await request<AddressType[]>({
+        url: URL_ADDRESS,
+        method: MethodEnum.GET,
+    });
+    
+    if (result) {
+      setAddresses(result);
+    }
+    
+    setAddressLoading(false);
   }, [request, setAddresses]);
-
+  
   const createAddress = useCallback(async (data: CreateAddressType) => {
-   
-  }, [request]);
+    setAddressLoading(true);
+    await request({
+        url: URL_ADDRESS,
+        method: MethodEnum.POST,
+        body: data,
+        message: 'Endereço cadastrado com sucesso!'
+    });
+    await fetchAddresses();
+    setAddressLoading(false);
+  }, [request, fetchAddresses]);
 
   const deleteAddress = useCallback(async (addressId: number) => {
     await request({

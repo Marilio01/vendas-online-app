@@ -20,4 +20,5 @@ export const addressSlice = createSlice({
 });
 
 export const { setAddressesAction } = addressSlice.actions;
+
 export default addressSlice.reducer;

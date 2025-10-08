@@ -16,6 +16,7 @@ import { Icon } from './shared/components/icon/Icon';
 import { MenuUrl } from './shared/enums/MenuUrl.enum';
 import { theme } from './shared/themes/theme';
 import CheckoutScreen from './modules/checkout/screens/Chekout';
+import CreateAddressScreen from './modules/address/screens/CreateAddress';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -47,40 +48,42 @@ const TabNavigation = () => {
     };
 
     return (
-        <Tab.Navigator
-            screenOptions={({ route }) => ({
-                tabBarIcon: ({ color }) => renderTabBarIcon(color, route),
-                tabBarActiveTintColor: theme.colors.mainTheme.primary,
-                tabBarInactiveTintColor: theme.colors.grayTheme.gray80,
-                tabBarLabelStyle: {
-                    marginBottom: 8,
-                },
-                tabBarStyle: {
-                    height: 52,
-                    padding: 8,
-                },
-            })}
-        >
+            <Tab.Navigator
+                screenOptions={({ route }) => ({
+                    headerTitleAlign: 'center',
+                    headerStatusBarHeight: 15,
+
+                    tabBarIcon: ({ color }) => renderTabBarIcon(color, route),
+                    tabBarActiveTintColor: theme.colors.mainTheme.primary,
+                    tabBarInactiveTintColor: theme.colors.grayTheme.gray80,
+                    tabBarLabelStyle: {
+                        marginBottom: 8,
+                    },
+                    tabBarStyle: {
+                        padding: 8,
+                    },
+                })}
+            >
             <Tab.Screen name={MenuUrl.HOME} component={Home} options={{ headerShown: false }} />
-            <Tab.Screen
+            {/* <Tab.Screen
                 name={MenuUrl.SEARCH_PRODUCT}
                 component={SearchProduct}
                 options={{ title: 'Buscar', headerShown: false }}
-            />
+            />*/}
             <Tab.Screen
                 name={MenuUrl.CART}
                 component={Cart}
-                options={{ title: 'Carrinho', headerShown: false }}
+                options={{ title: 'Carrinho'}}
             />
             <Tab.Screen
                 name={MenuUrl.ORDER}
                 component={Orders}
-                options={{ title: 'Pedidos', headerShown: false }}
+                options={{ title: 'Pedidos' }}
             />
             <Tab.Screen
                 name={MenuUrl.PROFILE}
                 component={Profile}
-                options={{ title: 'Perfil', headerShown: false }}
+                options={{ title: 'Perfil' }}
             />
         </Tab.Navigator>
     );
@@ -89,27 +92,46 @@ const TabNavigation = () => {
 const Navigation = () => {
     return (
         <NavigationContainer>
-            <Stack.Navigator>
-                <Stack.Screen name={MenuUrl.SPLASH} component={Splash} options={{ headerShown: false }} />
-                <Stack.Screen name={MenuUrl.LOGIN} component={Login} options={{ headerShown: false }} />
-                <Stack.Screen name={MenuUrl.PRODUCT} component={Product} />
+            <Stack.Navigator
+                    screenOptions={{
+                        statusBarStyle: 'dark',
+                        statusBarAnimation: 'fade',
+                }}>
+                <Stack.Screen 
+                    name={MenuUrl.SPLASH} 
+                    component={Splash} 
+                    options={{ headerShown: false }} 
+                />
+                <Stack.Screen 
+                    name={MenuUrl.LOGIN}
+                    component={Login} 
+                    options={{ headerTitle: '', headerShadowVisible: false }}
+                />
+                <Stack.Screen
+                    name={MenuUrl.PRODUCT}
+                    component={Product} 
+                />
                 <Stack.Screen
                     name={MenuUrl.CREATE_USER}
                     component={CreateUser}
-                    options={{ title: 'Criar usuário' }}
+                    options={{ headerTitle: '', headerShadowVisible: false }}
                 />
-
                 <Stack.Screen
                     name={MenuUrl.HOME}
                     component={TabNavigation}
                     options={{ headerShown: false }}
                 />
-
                 <Stack.Screen
                     name="Checkout"
                     component={CheckoutScreen}
                     options={{ title: 'Revisão do Pedido' }}
                 />
+                <Stack.Screen 
+                    name="CreateAddress" 
+                    component={CreateAddressScreen} 
+                    options={{ title: 'Cadastro de Endereço' }}
+                />
+
             </Stack.Navigator>
         </NavigationContainer>
     );
