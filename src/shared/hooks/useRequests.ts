@@ -64,7 +64,7 @@ export const useRequests = () => {
 
     const authRequest = async (body: RequestLogin) => {
         setLoading(true);
-        await connectionAPIPost<ReturnLogin>('http://10.0.0.107:8080/auth', body)
+        await connectionAPIPost<ReturnLogin>('http://192.168.255.101:8080/auth', body)
             .then((result) => {
                 setAuthorizationToken(result.accessToken);
                 setUser(result.user);
