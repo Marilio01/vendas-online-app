@@ -1,11 +1,15 @@
-import { Alert, Modal as ModalReact, ModalProps as ModalPropsReact } from 'react-native';
+import {
+  Alert,
+  Modal as ModalReact,
+  ModalProps as ModalPropsReact,
+  TouchableOpacity,
+} from 'react-native';
 
 import { theme } from '../../themes/theme';
 import Button from '../button/Button';
 import Text from '../text/Text';
 import { textTypes } from '../text/textTypes';
-import { ContainerModal, IconCloseModal } from './modal.style';
-
+import { ContainerModal, IconCloseModal, ModalOverlay } from './modal.style';
 
 interface ModalProps extends ModalPropsReact {
   title: string;
@@ -24,14 +28,18 @@ const Modal = ({ title, text, onCloseModal, ...props }: ModalProps) => {
       }}
       {...props}
     >
-      <ContainerModal>
-        <Text type={textTypes.PARAGRAPH_SEMI_BOLD} color={theme.colors.mainTheme.primary}>
-          {title}
-        </Text>
-        <Text>{text}</Text>
-        <Button title="OK" onPress={onCloseModal} />
-        <IconCloseModal onPress={onCloseModal} name="cross" />
-      </ContainerModal>
+      <ModalOverlay>
+        <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={onCloseModal} />
+
+        <ContainerModal>
+          <Text type={textTypes.PARAGRAPH_SEMI_BOLD} color={theme.colors.mainTheme.primary}>
+            {title}
+          </Text>
+          <Text>{text}</Text>
+          <Button title="OK" onPress={onCloseModal} />
+          <IconCloseModal onPress={onCloseModal} name="cross" />
+        </ContainerModal>
+      </ModalOverlay>
     </ModalReact>
   );
 };

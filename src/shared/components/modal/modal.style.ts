@@ -3,11 +3,18 @@ import styled from 'styled-components/native';
 import { theme } from '../../themes/theme';
 import { Icon } from '../icon/Icon';
 
+export const ModalOverlay = styled.View`
+  flex: 1;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: flex-end;
+`;
+
 export const ContainerModal = styled.View`
-  position: absolute;
+  width: 100%;
   bottom: 0;
   background-color: ${theme.colors.neutralTheme.white};
   height: 200px;
+  align-items: center;
 
   border-top-right-radius: 16px;
   border-top-left-radius: 16px;
