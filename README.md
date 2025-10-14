@@ -29,13 +29,13 @@ O sistema foi projetado para ser uma solução completa de e-commerce.
 
 ## 📊 Diagrama de Caso de Uso
 
-![Diagrama de Caso de Uso](./src/assets/diagramas/Diagrama-de-casos-de-uso-Vendas-Online.jpg)
+![Diagrama de Caso de Uso](./src/assets/diagramas/Diagrama-de-casos-de-uso-Vendas-Online.png)
 
 ## 🎨 Protótipo no Figma
 
 Você pode visualizar o protótipo completo no Figma clicando no link abaixo:
 
-🔗 [Abrir no Figma](https://www.figma.com/proto/RN03CQdT647qJtUM78c97y/Vendas-Online?node-id=1-1352&p=f&t=s1dlawE3rlEDyZ8A-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1figma.com/proto/seu-link-aqui)
+🔗 [Abrir no Figma](https://www.figma.com/design/RN03CQdT647qJtUM78c97y/Vendas-Online?node-id=0-1&t=nEpYvF2d7C3v1RsJ-1)
 
 ## 🛠️ Tecnologias Utilizadas
 
