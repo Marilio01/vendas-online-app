@@ -16,6 +16,7 @@ export const Container = styled.View<ContainerProps>`
   justify-content: center;
   height: 52px;
   border-color: ${({ borderColor }: ContainerProps) => borderColor};
+  background-color: ${theme.colors.neutralTheme.white};
 `;
 
 export const Input = styled.TextInput.attrs({

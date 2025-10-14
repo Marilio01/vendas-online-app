@@ -47,12 +47,12 @@ export const FloatingLabelInput = forwardRef(
     const animatedIsFocused = useRef(new Animated.Value(value ? 1 : 0)).current;
 
     const activeColor = error ? theme.colors.redTheme.red : theme.colors.neutralTheme.black;
-    const labelColor = error ? theme.colors.redTheme.red : theme.colors.grayTheme.gray100;
+    const labelColor = error ? theme.colors.redTheme.red : theme.colors.textTheme.secondary;
     const borderColor = error
       ? theme.colors.redTheme.red
       : isFocused
-      ? theme.colors.neutralTheme.black
-      : theme.colors.grayTheme.gray100;
+      ? theme.colors.blueTheme.primary
+      : theme.colors.inputTheme.secondary
 
     const handleTextChange = (text: string) => {
       if (onChangeText) {
@@ -103,7 +103,6 @@ export const FloatingLabelInput = forwardRef(
 
     return (
       <Wrapper>
-        <Label style={animatedLabelStyle}>{label}</Label>
         <Container borderColor={borderColor}>
           <Input
             ref={ref}
@@ -120,11 +119,12 @@ export const FloatingLabelInput = forwardRef(
               <Feather
                 name={props.secureTextEntry ? 'eye' : 'eye-off'}
                 size={20}
-                color={theme.colors.grayTheme.gray100}
+                color={theme.colors.inputTheme.primary}
               />
             </ToggleButton>
           )}
         </Container>
+        <Label style={animatedLabelStyle}>{label}</Label>
         {!!error && (
           <ErrorContainer>
             <Feather name="alert-circle" size={14} color={theme.colors.redTheme.red} />
