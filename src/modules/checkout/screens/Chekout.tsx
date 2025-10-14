@@ -10,6 +10,8 @@ import { convertNumberToMoney } from '../../../shared/functions/money';
 import { styles } from './checkout.style';
 import { AddressItem } from '../../address/screens/AddressList';
 import { theme } from '../../../shared/themes/theme';
+import { displayLocalNotification } from '../../../shared/services/notificationsSevices';
+
 
 const CheckoutScreen = () => {
     const navigation = useNavigation();
@@ -31,9 +33,16 @@ const CheckoutScreen = () => {
             Alert.alert('Atenção', 'Por favor, selecione um endereço de entrega.');
             return;
         }
+
+        // Simulação de sucesso do pedido
         Alert.alert('Sucesso', 'Pedido realizado com sucesso!', [
             { text: 'OK', onPress: () => navigation.goBack() },
         ]);
+
+        displayLocalNotification(
+            'Pedido Confirmado! ✅',
+            `Seu pedido no valor de ${convertNumberToMoney(totalValue)} foi recebido e já está sendo preparado.`
+        );
     };
 
     const handleDeleteSuccess = () => {
