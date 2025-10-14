@@ -37,40 +37,5 @@ export const Subtitle = styled.Text`
 export const ButtonContainer = styled.View`
   width: 100%;
   align-items: center;
-  gap: 16px;
-`;
-
-export const PrimaryButton = styled.TouchableOpacity`
-  width: 100%;
-  height: 46px;
-  background-color: ${theme.colors.neutralTheme.black};
-  border-radius: 34px;
-  align-items: center;
-  justify-content: center;
-  elevation: 5;
-  shadow-color: ${theme.colors.neutralTheme.black};
-  shadow-offset: 0px 4px;
-  shadow-opacity: 0.20;
-  shadow-radius: 5px;
-`;
-
-export const ButtonTextPrimary = styled.Text`
-  color: ${theme.colors.neutralTheme.white};
-  font-size: 15px;
-  font-weight: 500;
-`;
-
-export const SecondaryButton = styled.TouchableOpacity`
-  width: 100%;
-  height: 46px;
-  border: 1px solid ${theme.colors.neutralTheme.black};
-  border-radius: 34px;
-  align-items: center;
-  justify-content: center;
-`;
-
-export const ButtonTextSecondary = styled.Text`
-  color: ${theme.colors.neutralTheme.black};
-  font-size: 15px;
-  font-weight: 500;
+  gap: 12px;
 `;

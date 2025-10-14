@@ -1,17 +1,8 @@
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import {
-  Container,
-  Logo,
-  Title,
-  Subtitle,
-  ButtonContainer,
-  PrimaryButton,
-  ButtonTextPrimary,
-  SecondaryButton,
-  ButtonTextSecondary,
-} from '../styles/firstScreen.style';
+import { Container, Logo, Title, Subtitle, ButtonContainer } from '../styles/firstScreen.style';
+import Button from '../../../shared/components/button/Button';
 
 type AuthStackParamList = {
   Login: undefined;
@@ -35,12 +26,8 @@ const FirstScreen = () => {
       <Title>Encontre o que procura</Title>
       <Subtitle>A sua experiência de compra, simplificada.</Subtitle>
       <ButtonContainer>
-        <PrimaryButton onPress={handleGoToLogin}>
-          <ButtonTextPrimary>Entrar</ButtonTextPrimary>
-        </PrimaryButton>
-        <SecondaryButton onPress={handleGoToCreateUser}>
-          <ButtonTextSecondary>Cadastra-se</ButtonTextSecondary>
-        </SecondaryButton>
+        <Button title="Entrar" onPress={handleGoToLogin} variant="primary" withShadow={true} />
+        <Button title="Cadastra-se" onPress={handleGoToCreateUser} variant="secondary" />
       </ButtonContainer>
     </Container>
   );

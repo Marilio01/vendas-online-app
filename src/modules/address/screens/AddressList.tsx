@@ -16,46 +16,68 @@ interface AddressItemProps {
   onDeleteSuccess: () => void;
 }
 
-export const AddressItem = ({ item, selectedAddressId, onSelectAddress, onDeleteSuccess }: AddressItemProps) => {
-    const { deleteAddress } = useAddress();
-    const [deleteModal, setDeleteModal] = useState<{ visible: boolean; id?: number }>({ visible: false });
+export const AddressItem = ({
+  item,
+  selectedAddressId,
+  onSelectAddress,
+  onDeleteSuccess,
+}: AddressItemProps) => {
+  const { deleteAddress } = useAddress();
+  const [deleteModal, setDeleteModal] = useState<{ visible: boolean; id?: number }>({
+    visible: false,
+  });
 
-    const confirmDelete = async () => {
-        if (deleteModal.id) {
-            await deleteAddress(deleteModal.id);
-            onDeleteSuccess();
-            setDeleteModal({ visible: false });
-        }
-    };
-    
-    return (
-        <>
-            <Modal transparent={true} visible={deleteModal.visible} onRequestClose={() => setDeleteModal({ visible: false })}>
-                 <View style={styles.modalOverlay}>
-                    <View style={styles.modalContainer}>
-                        <Text style={styles.modalTitle}>Tem certeza?</Text>
-                        <Text style={styles.modalText}>Deseja remover este endereço?</Text>
-                        <View style={styles.modalButtons}>
-                            <Button title="Cancelar" onPress={() => setDeleteModal({ visible: false })} type="secondary" margin="0px 8px 0px 0px"/>
-                            <Button title="Sim, remover" onPress={confirmDelete} />
-                        </View>
-                    </View>
-                </View>
-            </Modal>
+  const confirmDelete = async () => {
+    if (deleteModal.id) {
+      await deleteAddress(deleteModal.id);
+      onDeleteSuccess();
+      setDeleteModal({ visible: false });
+    }
+  };
 
-            <TouchableOpacity
-                style={[styles.addressItem, selectedAddressId === item.id && styles.selectedAddressItem]}
-                onPress={() => onSelectAddress(item.id)}
-            >
-                <Icon name={selectedAddressId === item.id ? "radio-checked" : "radio-unchecked"} size={20} color={theme.colors.mainTheme.primary} />
-                <View style={styles.addressContent}>
-                    <Text>{`${item.street}, ${item.numberAddress}`}</Text>
-                    <Text>{`${item.neighborhood} - ${item.city?.name}/${item.city?.state?.uf}`}</Text>
-                </View>
-                <TouchableOpacity onPress={() => setDeleteModal({ visible: true, id: item.id })}>
-                    <Icon name="bin2" size={20} color={theme.colors.grayTheme.gray80} />
-                </TouchableOpacity>
-            </TouchableOpacity>
-        </>
-    );
+  return (
+    <>
+      <Modal
+        transparent={true}
+        visible={deleteModal.visible}
+        onRequestClose={() => setDeleteModal({ visible: false })}
+        animationType="fade"
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Remover Endereço</Text>
+            <Text style={styles.modalText}>Tem certeza que deseja remover este endereço?</Text>
+              <Button
+                title="Cancelar"
+                onPress={() => setDeleteModal({ visible: false })}
+                variant="secondary"
+              />
+              <Button
+                title="Sim, remover"
+                onPress={confirmDelete}
+                variant="danger"
+              />
+            </View>
+          </View>
+      </Modal>
+
+      <TouchableOpacity
+        style={[styles.addressItem, selectedAddressId === item.id && styles.selectedAddressItem]}
+        onPress={() => onSelectAddress(item.id)}
+      >
+        <Icon
+          name={selectedAddressId === item.id ? 'radio-checked' : 'radio-unchecked'}
+          size={20}
+          color={theme.colors.mainTheme.primary}
+        />
+        <View style={styles.addressContent}>
+          <Text>{`${item.street}, ${item.numberAddress}`}</Text>
+          <Text>{`${item.neighborhood} - ${item.city?.name}/${item.city?.state?.uf}`}</Text>
+        </View>
+        <TouchableOpacity onPress={() => setDeleteModal({ visible: true, id: item.id })}>
+          <Icon name="bin2" size={20} color={theme.colors.grayTheme.gray80} />
+        </TouchableOpacity>
+      </TouchableOpacity>
+    </>
+  );
 };

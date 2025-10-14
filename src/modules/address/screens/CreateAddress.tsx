@@ -111,6 +111,8 @@ const CreateAddressScreen = () => {
                 onPress={handleSaveAddress}
                 loading={addressLoading}
                 disabled={!isFormValid || addressLoading || cepLoading}
+                borderRadius="8px"
+                variant="warning"
             />
         </View>
     );

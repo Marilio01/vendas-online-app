@@ -34,7 +34,6 @@ const CheckoutScreen = () => {
             return;
         }
 
-        // Simulação de sucesso do pedido
         Alert.alert('Sucesso', 'Pedido realizado com sucesso!', [
             { text: 'OK', onPress: () => navigation.goBack() },
         ]);
@@ -76,8 +75,9 @@ const CheckoutScreen = () => {
                     <View style={{ marginTop: 8 }} />
                     <Button 
                         title="Novo Endereço" 
-                        type="secondary"
+                        variant="secondary"
                         onPress={() => (navigation.navigate as any)('CreateAddress')}
+                        borderRadius="8px"
                     />
                 </View>
 
@@ -102,6 +102,8 @@ const CheckoutScreen = () => {
                     title="Confirmar Pedido"
                     onPress={handleConfirmOrder}
                     disabled={!selectedAddressId}
+                    variant="warning"
+                    borderRadius="8px"
                 />
             </View>
         </View>

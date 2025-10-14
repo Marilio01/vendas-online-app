@@ -9,7 +9,6 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { FloatingLabelInput } from '../../../shared/components/floatingLabelInput/FloatingLabelInput';
-import Text from '../../../shared/components/text/Text';
 import { useCreateUser } from '../hooks/useCreateUser';
 import {
   ContainerCreateUser,
@@ -18,10 +17,10 @@ import {
   BottomLinkContainer,
   BottomText,
   BottomLink,
-  PrimaryButton,
   ButtonContainer,
 } from '../styles/createUser.style';
 import { theme } from '../../../shared/themes/theme';
+import Button from '../../../shared/components/button/Button';
 
 const CreateUser = () => {
   const {
@@ -135,13 +134,14 @@ const CreateUser = () => {
             />
 
             <ButtonContainer>
-              <PrimaryButton onPress={handleCreateUser} disabled={isButtonDisabled}>
-                {loading ? (
-                  <ActivityIndicator color = {theme.colors.neutralTheme.white} />
-                ) : (
-                  <Text style={{ color: theme.colors.neutralTheme.white, fontWeight: 'bold' }}>Cadastrar</Text>
-                )}
-              </PrimaryButton>
+              <Button
+                title="Cadastrar"
+                onPress={handleCreateUser}
+                loading={loading}
+                disabled={isButtonDisabled}
+                variant="primary"
+                withShadow={true}
+              />
             </ButtonContainer>
 
             <BottomLinkContainer>

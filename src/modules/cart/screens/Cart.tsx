@@ -66,7 +66,7 @@ const Cart = () => {
 
 
                 <TouchableOpacity style={styles.deleteButton} onPress={() => setItemToDelete(item)}>
-                    <Icon name="bin2" size={24} color={theme.colors.orangeTheme.orange80} />
+                    <Icon name="bin2" size={24} color={theme.colors.redTheme.red} />
                 </TouchableOpacity>
             </View>
         </View>
@@ -90,11 +90,9 @@ const Cart = () => {
                     <View style={styles.modalContainer}>
                         <Text style={styles.modalTitle}>Remover Item</Text>
                         <Text style={styles.modalText}>Tem certeza que deseja remover este item do carrinho?</Text>
-                        <View style={styles.modalButtons}>
-                            <Button title="Cancelar" onPress={() => setItemToDelete(null)} type={theme.buttons.buttonsTheme.secondary} margin="0px 8px 0px 0px" />
+                            <Button title="Cancelar" onPress={() => setItemToDelete(null)} variant="secondary" />
+                            <Button title="Sim, remover" onPress={handleConfirmDelete} variant="danger" />
                         </View>
-                        <Button title="Sim, remover" onPress={handleConfirmDelete} margin="10px 0px 0px 0px" />/
-                    </View>
                 </View>
             </Modal>
 
@@ -115,7 +113,8 @@ const Cart = () => {
                     <Button
                         title="Finalizar Compra"
                         onPress={handleGoToCheckout}
-                        type={theme.buttons.buttonsTheme.primary}
+                        variant="warning"
+                        borderRadius="8px"
                     />
                 </View>
             )}

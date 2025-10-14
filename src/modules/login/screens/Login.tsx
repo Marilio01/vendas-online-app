@@ -1,7 +1,6 @@
 import React, { useRef } from 'react';
 import {
   TouchableOpacity,
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -16,11 +15,9 @@ import {
   SignUpContainer,
   SignUpText,
   SignUpLink,
-  PrimaryButton,
-  ButtonContainer,
 } from '../styles/login.style';
-import Text from '../../../shared/components/text/Text';
 import { theme } from '../../../shared/themes/theme';
+import Button from '../../../shared/components/button/Button';
 
 const Login = () => {
   const {
@@ -83,15 +80,14 @@ const Login = () => {
             onSubmitEditing={!isButtonDisabled ? handleOnPress : undefined}
           />
 
-          <ButtonContainer>
-            <PrimaryButton onPress={handleOnPress} disabled={isButtonDisabled}>
-              {loading ? (
-                <ActivityIndicator color={theme.colors.neutralTheme.white} />
-              ) : (
-                <Text style={{ color: theme.colors.neutralTheme.white, fontWeight: 'bold' }}>Entrar</Text>
-              )}
-            </PrimaryButton>
-          </ButtonContainer>
+          <Button
+            title="Entrar"
+            onPress={handleOnPress}
+            loading={loading}
+            disabled={isButtonDisabled}
+            variant="primary"
+            withShadow={true}
+          />
 
           <SignUpContainer>
             <SignUpText>Não tem conta?</SignUpText>
