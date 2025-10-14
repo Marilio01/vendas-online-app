@@ -1,42 +1,52 @@
-import styled from 'styled-components/native';
-import LinearGradient from 'react-native-linear-gradient';
-import { theme } from '../../themes/theme';
+import styled, { DefaultTheme, css } from 'styled-components/native';
 
-interface ButtonContainerProps {
-  margin?: string;
+type ButtonVariant = 'primary' | 'secondary' | 'success' | 'danger' | 'warning';
+
+interface ButtonProps {
+  variant?: ButtonVariant;
+  disabled?: boolean;
+  borderRadius?: string;
+  withShadow?: boolean;
 }
 
-export const ButtonContainer = styled.TouchableOpacity<ButtonContainerProps>`
+type PropsWithTheme = ButtonProps & { theme: DefaultTheme };
+
+export const StyledButton = styled.TouchableOpacity<ButtonProps>`
   width: 100%;
-  height: 48px;
-  border-radius: 4px;
-  flex-direction: row;
-  justify-content: center;
+  height: 46px;
   align-items: center;
-  ${(props: { margin: any; }) => (props.margin ? `margin: ${props.margin};` : '')}
-
-  `;
-
-export const GradientButton = styled(LinearGradient) <ButtonContainerProps>`
-  width: 100%;
-  height: 100%;
-  border-radius: 4px;
   justify-content: center;
-  align-items: center;
-  flex-direction: row;
-  margin: ${(props: ButtonContainerProps) => props.margin || '0'};
+  margin-top: 10px;
+  border-radius: ${({ borderRadius = '34px' }) => borderRadius};
+
+  background-color: ${({ variant = 'primary', disabled, theme }: PropsWithTheme) => {
+    if (disabled) {
+      return theme.colors.grayTheme.grayDisabled;
+    }
+    return theme.buttons[variant].background;
+  }};
+
+  border-width: ${({ variant = 'primary', theme }: PropsWithTheme) =>
+    theme.buttons[variant].border ? '1px' : '0px'};
+  
+  border-color: ${({ variant = 'primary', theme }: PropsWithTheme) =>
+    theme.buttons[variant].border || 'transparent'};
+
+  ${({ withShadow, theme }: PropsWithTheme) =>
+    withShadow &&
+    css`
+      elevation: 5;
+      shadow-color: ${theme.colors.neutralTheme.black};
+      shadow-offset: 0px 4px;
+      shadow-opacity: 0.25;
+      shadow-radius: 6px;
+    `}
 `;
 
-export const ButtonSecondary = styled(ButtonContainer) <ButtonContainerProps>`
-  margin: ${(props: ButtonContainerProps) => props.margin || '0'};
-  border-width: 1px;
-  border-color: ${theme.colors.mainTheme.primary};
-`;
-
-export const ButtonDisabled = styled(ButtonContainer) <ButtonContainerProps>`
-  background-color: ${theme.colors.grayTheme.gray100};
-`;
-
-export const ActivityIndicatorButton = styled.ActivityIndicator`
-  margin-left: 8px;
+export const ButtonText = styled.Text<ButtonProps>`
+  font-weight: 500;
+  font-size: 15px;
+  color: ${({ variant = 'primary', theme }: PropsWithTheme) => {
+    return theme.buttons[variant].text;
+  }};
 `;
