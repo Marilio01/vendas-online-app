@@ -7,7 +7,7 @@ import Text from '../../../shared/components/text/Text';
 import Button from '../../../shared/components/button/Button';
 import { Icon } from '../../../shared/components/icon/Icon';
 import { theme } from '../../../shared/themes/theme';
-import { styles } from '../../checkout/screens/checkout.style';
+import { styles } from '../../checkout/styles/checkout.style';
 
 interface AddressItemProps {
   item: AddressType;
@@ -47,18 +47,14 @@ export const AddressItem = ({
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Remover Endereço</Text>
             <Text style={styles.modalText}>Tem certeza que deseja remover este endereço?</Text>
-              <Button
-                title="Cancelar"
-                onPress={() => setDeleteModal({ visible: false })}
-                variant="secondary"
-              />
-              <Button
-                title="Sim, remover"
-                onPress={confirmDelete}
-                variant="danger"
-              />
-            </View>
+            <Button
+              title="Cancelar"
+              onPress={() => setDeleteModal({ visible: false })}
+              variant="secondary"
+            />
+            <Button title="Sim, remover" onPress={confirmDelete} variant="danger" />
           </View>
+        </View>
       </Modal>
 
       <TouchableOpacity
