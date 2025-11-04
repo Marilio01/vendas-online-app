@@ -20,9 +20,22 @@ import Button from '../../../shared/components/button/Button';
 
 const Profile = () => {
   const { user } = useUserReducer();
-  const navigate = useNavigation<NavigationProp<ParamListBase>>();
 
-  const handleLogout = () => logout(navigate);
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
+
+  const handleLogout = () => logout(navigation);
+
+  const handleNavigateToEdit = () => {
+    navigation.navigate('EditProfile');
+  };
+
+  const handleNavigateToOrder = () => {
+    navigation.navigate('Orders');
+  };
+
+  const handleNavigateToChangePassword = () => {
+    navigation.navigate('ChangePassword');
+  };
 
   return (
     <Container>
@@ -37,7 +50,8 @@ const Profile = () => {
             <Icon name="mail" size={24} color="#333" />
             <InfoText>{user?.email || 'email@exemplo.com'}</InfoText>
           </InfoRow>
-          <InfoRow>
+
+          <InfoRow onPress={handleNavigateToEdit}>
             <Icon name="edit" size={24} color="#333" />
             <InfoText>Editar Perfil</InfoText>
           </InfoRow>
@@ -47,7 +61,7 @@ const Profile = () => {
 
         <Section>
           <SectionTitle>Minhas Compras</SectionTitle>
-          <InfoRow>
+          <InfoRow onPress={handleNavigateToOrder}>
             <Icon name="shopping-bag" size={24} color="#333" />
             <InfoText>Meus Pedidos</InfoText>
           </InfoRow>
@@ -57,7 +71,8 @@ const Profile = () => {
 
         <Section>
           <SectionTitle>Configurações</SectionTitle>
-          <InfoRow>
+
+          <InfoRow onPress={handleNavigateToChangePassword}>
             <Icon name="lock" size={24} color="#333" />
             <InfoText>Alterar senha</InfoText>
           </InfoRow>
@@ -65,14 +80,8 @@ const Profile = () => {
       </ContentWrapper>
 
       <Footer>
-        <Button
-          title="Sair"
-          onPress={handleLogout}
-          variant="danger"
-          borderRadius="8px"
-        />
+        <Button title="Sair" onPress={handleLogout} variant="danger" borderRadius="8px" />
       </Footer>
-
     </Container>
   );
 };
