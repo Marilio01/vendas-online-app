@@ -1,15 +1,12 @@
-export const URL_USER = 'http://10.0.0.107:8080/user';
+export const BASE_URL = 'http://10.0.0.107:8080';
 
-export const URL_PRODUCT = 'http://10.0.0.107:8080/product';
-
-export const URL_CART = 'http://10.0.0.107:8080/cart';
-
-export const URL_PRODUCT_PAGE = 'http://10.0.0.107:8080/product/page';
-
-export const URL_ADDRESS = 'http://10.0.0.107:8080/address'
-
-export const URL_CATEGORY = 'http://10.0.0.107:8080/category';
-
-export const URL_STATE = 'http://10.0.0.107:8080/state';
-
-export const URL_CITY = 'http://10.0.0.107:8080/city';
+export const URL_USER = `${BASE_URL}/user`;
+export const URL_PRODUCT = `${BASE_URL}/product`;
+export const URL_CART = `${BASE_URL}/cart`;
+export const URL_PRODUCT_PAGE = `${BASE_URL}/product/page`;
+export const URL_ADDRESS = `${BASE_URL}/address`;
+export const URL_CATEGORY = `${BASE_URL}/category`;
+export const URL_STATE = `${BASE_URL}/state`;
+export const URL_CITY = `${BASE_URL}/city`;
+export const URL_ORDER = `${BASE_URL}/order`;
+export const URL_ORDER_ID = `${BASE_URL}/order`;
