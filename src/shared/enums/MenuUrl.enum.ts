@@ -1,9 +1,10 @@
 export enum MenuUrl {
     SPLASH = 'Splash',
     LOGIN = 'Login',
-    HOME = 'Home',
+    HOME = 'AppTabs',
+    HOME_TAB = 'Home',
     CREATE_USER = 'CreateUser',
-    ORDER = 'Order',
+    ORDER = 'Orders',
     PROFILE = 'Profile',
     PRODUCT = 'Product',
     CART = 'Cart',
