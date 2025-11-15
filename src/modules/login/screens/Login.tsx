@@ -25,7 +25,6 @@ const Login = () => {
     errors,
     showPassword,
     loading,
-    apiErrorMessage,
     isFormValid,
     handleOnPress,
     handleChange,
@@ -45,7 +44,7 @@ const Login = () => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1, backgroundColor: theme.colors.neutralTheme.black }}
+      style={{ flex: 1, backgroundColor: theme.colors.neutral.background }}
     >
       <ScrollView
         contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}

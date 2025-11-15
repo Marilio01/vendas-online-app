@@ -3,11 +3,11 @@ import Text from '../../../shared/components/text/Text';
 import { theme } from '../../../shared/themes/theme';
 
 export const ContainerLogin = styled.View`
-  flex: 1;
-  background-color: ${theme.colors.neutralTheme.white};
+  background-color: ${theme.colors.neutral.background};
   align-items: center;
-  justify-content: center;
-  padding: 0 24px;
+  width: 100%;
+  padding-left: 24px;
+  padding-right: 24px;
 `;
 
 export const Imagelogo = styled.Image`
@@ -19,7 +19,7 @@ export const Imagelogo = styled.Image`
 export const Title = styled.Text`
   font-size: 36px;
   font-weight: 800;
-  color: ${theme.colors.textTheme.primary};
+  color: ${theme.colors.text.primary};
   text-align: center;
   margin-bottom: 34px;
 `;
@@ -27,16 +27,17 @@ export const Title = styled.Text`
 export const SignUpContainer = styled.View`
   flex-direction: row;
   margin-top: 24px;
+  margin-bottom: 24px;
 `;
 
 export const SignUpText = styled(Text)`
   font-size: 14px;
-  color: ${theme.colors.textTheme.secondary};
+  color: ${theme.colors.text.secondary};
 `;
 
 export const SignUpLink = styled(Text)`
   font-size: 14px;
-  color: ${theme.colors.blueTheme.primary};
+  color: ${theme.colors.primary.main};
   font-weight: bold;
   margin-left: 5px;
   text-decoration: underline;
