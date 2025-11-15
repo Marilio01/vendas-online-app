@@ -23,11 +23,11 @@ const FirstScreen = () => {
   return (
     <Container>
       <Logo source={require('../../../assets/images/logo.jpg')} />
-      <Title>Encontre o que procura</Title>
-      <Subtitle>A sua experiência de compra, simplificada.</Subtitle>
+      <Title>O seu novo jeito de comprar</Title>
+      <Subtitle>Fácil, rápido e na palma da mão.</Subtitle>
       <ButtonContainer>
         <Button title="Entrar" onPress={handleGoToLogin} variant="primary" withShadow={true} />
-        <Button title="Cadastra-se" onPress={handleGoToCreateUser} variant="secondary" />
+        <Button title="Cadastre-se" onPress={handleGoToCreateUser} variant="secondary" />
       </ButtonContainer>
     </Container>
   );
