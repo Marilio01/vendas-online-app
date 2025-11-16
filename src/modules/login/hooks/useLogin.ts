@@ -1,17 +1,49 @@
-import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
+import {
+  NavigationProp,
+  ParamListBase,
+  useNavigation,
+  useRoute,
+  RouteProp,
+} from '@react-navigation/native';
 import { useState, useEffect } from 'react';
 import { MenuUrl } from '../../../shared/enums/MenuUrl.enum';
 import { useRequests } from '../../../shared/hooks/useRequests';
 import { validateEmail } from '../../../shared/functions/email';
+import Toast from 'react-native-toast-message';
+import { Keyboard } from 'react-native';
+
+type LoginRouteParams = {
+  Login: {
+    toastMessage?: string;
+    toastMessageText2?: string;
+  };
+};
 
 export const useLogin = () => {
-  const { navigate } = useNavigation<NavigationProp<ParamListBase>>();
+  const { navigate, setParams } = useNavigation<NavigationProp<ParamListBase>>();
+  const route = useRoute<RouteProp<LoginRouteParams, 'Login'>>();
   const { authRequest, errorMessage: apiErrorMessage, loading, setErrorMessage } = useRequests();
 
   const [values, setValues] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({ email: '', password: '' });
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(true);
   const [isFormValid, setIsFormValid] = useState(false);
+
+  useEffect(() => {
+    const message = route.params?.toastMessage;
+    const message2 = route.params?.toastMessageText2;
+
+    if (message) {
+      Toast.show({
+        type: 'success',
+        text1: message,
+        text2: message2,
+        position: 'bottom',
+        visibilityTime: 3000,
+      });
+      setParams({ toastMessage: undefined, toastMessageText2: undefined });
+    }
+  }, [route.params?.toastMessage, setParams]);
 
   useEffect(() => {
     const hasAllValues = Object.values(values).every((value) => value);
@@ -42,14 +74,19 @@ export const useLogin = () => {
     if (apiErrorMessage) {
       setErrorMessage('');
     }
+
+    if (errors[field]) {
+      handleBlur(field, newValues);
+    }
   };
 
-  const handleBlur = (field: 'email' | 'password') => {
-    const newError = validateField(field, values);
+  const handleBlur = (field: 'email' | 'password', currentValues?: typeof values) => {
+    const newError = validateField(field, currentValues || values);
     setErrors((prev) => ({ ...prev, [field]: newError }));
   };
 
   const handleOnPress = async () => {
+    Keyboard.dismiss();
     const newErrors = { email: '', password: '' };
     let isValid = true;
 
@@ -65,6 +102,13 @@ export const useLogin = () => {
       await authRequest({
         email: values.email,
         password: values.password,
+      });
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: 'Formulário inválido',
+        text2: 'Por favor, verifique os campos em vermelho.',
+        position: 'bottom',
       });
     }
   };

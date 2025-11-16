@@ -11,6 +11,8 @@ import { validateEmail } from '../../../shared/functions/email';
 import { validatePhone } from '../../../shared/functions/phone';
 import { validatePassword } from '../../../shared/functions/password';
 import { validateName } from '../../../shared/functions/name';
+import Toast from 'react-native-toast-message';
+import { Keyboard } from 'react-native';
 
 export const useCreateUser = () => {
   const { reset, navigate } = useNavigation<NavigationProp<ParamListBase>>();
@@ -111,6 +113,8 @@ export const useCreateUser = () => {
   };
 
   const handleCreateUser = async () => {
+    Keyboard.dismiss();
+
     const newErrors = { ...errors };
     let isValid = true;
     (Object.keys(values) as Array<keyof CreateUserType>).forEach((field) => {
@@ -129,14 +133,30 @@ export const useCreateUser = () => {
           phone: removeSpecialCharacters(values.phone),
           cpf: removeSpecialCharacters(values.cpf),
         },
-        message: 'Usuário cadastrado com sucesso!',
       });
+
       if (result) {
         reset({
-          index: 0,
-          routes: [{ name: MenuUrl.LOGIN }],
+          index: 1,
+          routes: [
+            { name: 'FirstScreen' },
+            {
+              name: MenuUrl.LOGIN,
+              params: {
+                toastMessage: 'Conta criada com sucesso!',
+                toastMessageText2: 'Você já pode fazer o login.',
+              },
+            },
+          ],
         });
       }
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: 'Formulário inválido',
+        text2: 'Por favor, verifique os campos em vermelho.',
+        position: 'bottom',
+      });
     }
   };
 

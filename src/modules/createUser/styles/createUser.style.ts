@@ -5,7 +5,7 @@ import { theme } from '../../../shared/themes/theme';
 export const ContainerCreateUser = styled.View`
   width: 100%;
   align-items: center;
-  background-color: ${theme.colors.neutralTheme.white};
+  background-color: ${theme.colors.neutral.background};
   padding: 24px;
 `;
 
@@ -18,7 +18,7 @@ export const Imagelogo = styled.Image`
 export const Title = styled(Text)`
   font-size: 36px;
   font-weight: 800;
-  color: ${theme.colors.textTheme.primary};
+  color: ${theme.colors.text.primary};
   margin-bottom: 24px;
 `;
 
@@ -29,12 +29,12 @@ export const BottomLinkContainer = styled.View`
 
 export const BottomText = styled(Text)`
   font-size: 14px;
-  color: ${theme.colors.textTheme.secondary}
+  color: ${theme.colors.text.secondary};
 `;
 
 export const BottomLink = styled(Text)`
   font-size: 14px;
-  color: ${theme.colors.blueTheme.primary};
+  color: ${theme.colors.primary.main};
   font-weight: bold;
   margin-left: 5px;
   text-decoration: underline;

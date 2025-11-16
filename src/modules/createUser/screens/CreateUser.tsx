@@ -47,7 +47,7 @@ const CreateUser = () => {
   const isButtonDisabled = !isFormValid || loading;
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.neutralTheme.black }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.neutral.background }}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
