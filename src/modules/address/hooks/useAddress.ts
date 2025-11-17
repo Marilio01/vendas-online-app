@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useRequests } from '../../../shared/hooks/useRequests';
 import { useAddressReducer } from '../../../store/reducers/addressReducer/useAddressReducer';
 import { AddressType, CreateAddressType } from '../../../shared/types/AddressType';
@@ -6,50 +6,63 @@ import { URL_ADDRESS } from '../../../shared/constants/urls';
 import { MethodEnum } from '../../../enums/methods.enum';
 
 export const useAddress = () => {
-  const { request } = useRequests();
-  const { addresses, setAddresses } = useAddressReducer();
-  const [addressLoading, setAddressLoading] = useState(false);
+  const { request, loading, errorMessage, setErrorMessage } = useRequests();
+  const { addresses, setAddresses, clearAddresses } = useAddressReducer();
 
   const fetchAddresses = useCallback(async () => {
-    setAddressLoading(true);
     const result = await request<AddressType[]>({
-        url: URL_ADDRESS,
-        method: MethodEnum.GET,
+      url: URL_ADDRESS,
+      method: MethodEnum.GET,
+      saveGlobal: setAddresses,
+      showErrorToast: false,
     });
-    
-    if (result) {
-      setAddresses(result);
+
+    if (!result) {
+      setAddresses([]);
     }
-    
-    setAddressLoading(false);
   }, [request, setAddresses]);
-  
-  const createAddress = useCallback(async (data: CreateAddressType) => {
-    setAddressLoading(true);
-    await request({
+
+  const createAddress = useCallback(
+    async (data: CreateAddressType) => {
+      const result = await request({
         url: URL_ADDRESS,
         method: MethodEnum.POST,
         body: data,
-        message: 'Endereço cadastrado com sucesso!'
-    });
-    await fetchAddresses();
-    setAddressLoading(false);
-  }, [request, fetchAddresses]);
+        message: 'Endereço cadastrado com sucesso!',
+      });
 
-  const deleteAddress = useCallback(async (addressId: number) => {
-    await request({
-        url: `${URL_ADDRESS}/${addressId}`, 
-        method: MethodEnum.DELETE, 
-        message: 'Endereço removido!'
-    });
-    await fetchAddresses(); 
-  }, [request, fetchAddresses]);
+      if (result) {
+        await fetchAddresses();
+      }
+    },
+    [request, fetchAddresses],
+  );
+
+  const deleteAddress = useCallback(
+    async (addressId: number): Promise<boolean> => {
+      const result = await request<{ success: boolean }>({
+        url: `${URL_ADDRESS}/${addressId}`,
+        method: MethodEnum.DELETE,
+      });
+
+      if (result) {
+        setAddresses(addresses.filter((addr) => addr.id !== addressId));
+        return true;
+      }
+
+      return false;
+    },
+    [request, addresses, setAddresses],
+  );
 
   return {
     addresses,
-    addressLoading,
+    addressLoading: loading,
+    addressErrorMessage: errorMessage,
+    setAddressErrorMessage: setErrorMessage,
     fetchAddresses,
     createAddress,
     deleteAddress,
+    clearAddresses,
   };
 };

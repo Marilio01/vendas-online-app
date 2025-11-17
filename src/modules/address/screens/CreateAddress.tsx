@@ -1,126 +1,152 @@
-import React from 'react';
-import { View, ScrollView, ActivityIndicator, StyleSheet } from 'react-native';
+import React, { useRef } from 'react';
+import { TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Text from '../../../shared/components/text/Text';
-import Input from '../../../shared/components/input/Input';
 import Button from '../../../shared/components/button/Button';
+import { FloatingLabelInput } from '../../../shared/components/floatingLabelInput/FloatingLabelInput';
 import { useAddress } from '../hooks/useAddress';
 import { useAddressForm } from '../hooks/useAddressForm';
-import { theme } from '../../../shared/themes/theme';
 import { CreateAddressType } from '../../../shared/types/AddressType';
+import { ButtonWrapper, StyledKeyboardAwareScrollView, Title } from '../styles/createAddress.style';
 
 const CreateAddressScreen = () => {
-    const navigation = useNavigation();
-    const { createAddress, addressLoading } = useAddress();
-    const {
-        addressState,
-        addressSetters,
-        isFormValid,
-        cepLoading,
-        isStreetReadOnly,
-        isNeighborhoodReadOnly,
-        handleCepChange,
-    } = useAddressForm();
+  const navigation = useNavigation();
+  const { createAddress, addressLoading, addressErrorMessage } = useAddress();
+  const {
+    addressState,
+    errors,
+    apiError,
+    cityId,
+    isFormValid,
+    cepLoading,
+    isStreetReadOnly,
+    isNeighborhoodReadOnly,
+    handleChange,
+    handleBlur,
+    handleCepChange,
+  } = useAddressForm();
 
-    const { cep, street, numberAddress, complement, neighborhood, city, uf, cityId } = addressState;
-    const { setNumber, setComplement, setNeighborhood, setStreet } = addressSetters;
+  const { cep, street, numberAddress, complement, neighborhood, city, uf } = addressState;
 
-    const handleSaveAddress = async () => {
-        if (!isFormValid || !cityId) return;
+  const bairroRef = useRef<TextInput>(null);
+  const ruaRef = useRef<TextInput>(null);
+  const numeroRef = useRef<TextInput>(null);
+  const complementoRef = useRef<TextInput>(null);
 
-        const newAddress: CreateAddressType = {
-            cep, street, complement, neighborhood,
-            numberAddress: parseInt(numberAddress, 10),
-            cityId: cityId,
-        };
+  const isButtonDisabled = !isFormValid || addressLoading || cepLoading;
 
-        await createAddress(newAddress);
-        navigation.goBack();
+  const handleSaveAddress = async () => {
+    if (isButtonDisabled) return;
+
+    const newAddress: CreateAddressType = {
+      cep: cep.replace(/\D/g, ''),
+      street: street.trim(),
+      complement: complement.trim(),
+      neighborhood: neighborhood.trim(),
+      numberAddress: parseInt(numberAddress.trim(), 10),
+      cityId: cityId!,
     };
 
-    const disabledInputStyle = { backgroundColor: theme.colors.grayTheme.gray50 };
+    await createAddress(newAddress);
+    if (!addressErrorMessage) {
+      navigation.goBack();
+    }
+  };
 
-    return (
-        <View style={styles.container}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-                <Text style={styles.title}>Novo Endereço</Text>
+  const getCepError = () => {
+    if (apiError) return apiError;
+    if (errors.cep) return errors.cep;
+    if (addressErrorMessage) return addressErrorMessage;
+    return undefined;
+  };
 
-                <Input
-                    title="CEP"
-                    value={cep}
-                    placeholder="00000-000"
-                    placeholderTextColor={theme.colors.grayTheme.gray80}
-                    onChangeText={handleCepChange}
-                    keyboardType="numeric"
-                    maxLength={9}
-                    loading={cepLoading}
-                />
+  const handleCepSubmit = () => {
+    if (!isNeighborhoodReadOnly) {
+      bairroRef.current?.focus();
+    } else if (!isStreetReadOnly) {
+      ruaRef.current?.focus();
+    } else {
+      numeroRef.current?.focus();
+    }
+  };
 
-                <Input
-                    title="Estado (UF)"
-                    value={uf}
-                    placeholder="Preenchido pelo CEP"
-                    placeholderTextColor={theme.colors.grayTheme.gray80}
-                    editable={false}
-                    style={disabledInputStyle}
-                />
-                <Input
-                    title="Cidade"
-                    value={city}
-                    placeholder="Preenchido pelo CEP"
-                    placeholderTextColor={theme.colors.grayTheme.gray80}
-                    editable={false}
-                    style={disabledInputStyle}
-                />
-                <Input
-                    title="Bairro"
-                    value={neighborhood}
-                    placeholder={isNeighborhoodReadOnly ? "Preenchido pelo CEP" : "Digite o bairro"}
-                    placeholderTextColor={theme.colors.grayTheme.gray80}
-                    onChangeText={setNeighborhood}
-                    editable={!isNeighborhoodReadOnly}
-                    style={isNeighborhoodReadOnly ? disabledInputStyle : {}}
-                />
-                <Input
-                    title="Rua"
-                    value={street}
-                    placeholder={isStreetReadOnly ? "Preenchido pelo CEP" : "Digite a rua"}
-                    placeholderTextColor={theme.colors.grayTheme.gray80}
-                    onChangeText={setStreet}
-                    editable={!isStreetReadOnly}
-                    style={isStreetReadOnly ? disabledInputStyle : {}}
-                />
-                <Input
-                    title="Número"
-                    value={numberAddress}
-                    placeholder="Ex: 123"
-                    placeholderTextColor={theme.colors.grayTheme.gray80}
-                    onChangeText={setNumber}
-                    keyboardType="numeric"
-                />
-                <Input
-                    title="Complemento (Opcional)"
-                    value={complement}
-                    placeholder="Ex: Apto 301, Bloco B"
-                    placeholderTextColor={theme.colors.grayTheme.gray80}
-                    onChangeText={setComplement}
-                />
-            </ScrollView>
-            <Button
-                title="Salvar Endereço"
-                onPress={handleSaveAddress}
-                loading={addressLoading}
-                disabled={!isFormValid || addressLoading || cepLoading}
-                borderRadius="8px"
-                variant="warning"
-            />
-        </View>
-    );
+  return (
+    <StyledKeyboardAwareScrollView>
+      <Title>Novo Endereço</Title>
+
+      <FloatingLabelInput
+        label="CEP"
+        value={cep}
+        onChangeText={handleCepChange}
+        onBlur={() => handleBlur('cep')}
+        type="cep"
+        keyboardType="numeric"
+        maxLength={9}
+        loading={cepLoading}
+        error={getCepError()}
+        returnKeyType="next"
+        onSubmitEditing={handleCepSubmit}
+      />
+
+      <FloatingLabelInput label="Estado (UF)" value={uf} editable={false} />
+
+      <FloatingLabelInput label="Cidade" value={city} editable={false} />
+
+      <FloatingLabelInput
+        ref={bairroRef}
+        label="Bairro"
+        value={neighborhood}
+        onChangeText={(text) => handleChange('neighborhood', text)}
+        onBlur={() => handleBlur('neighborhood')}
+        editable={!isNeighborhoodReadOnly}
+        error={errors.neighborhood}
+        returnKeyType="next"
+        onSubmitEditing={() => ruaRef.current?.focus()}
+      />
+
+      <FloatingLabelInput
+        ref={ruaRef}
+        label="Rua"
+        value={street}
+        onChangeText={(text) => handleChange('street', text)}
+        onBlur={() => handleBlur('street')}
+        editable={!isStreetReadOnly}
+        error={errors.street}
+        returnKeyType="next"
+        onSubmitEditing={() => numeroRef.current?.focus()}
+      />
+
+      <FloatingLabelInput
+        ref={numeroRef}
+        label="Número"
+        value={numberAddress}
+        onChangeText={(text) => handleChange('numberAddress', text)}
+        onBlur={() => handleBlur('numberAddress')}
+        keyboardType="numeric"
+        error={errors.numberAddress}
+        returnKeyType="next"
+        onSubmitEditing={() => complementoRef.current?.focus()}
+      />
+
+      <FloatingLabelInput
+        ref={complementoRef}
+        label="Complemento (Opcional)"
+        value={complement}
+        onChangeText={(text) => handleChange('complement', text)}
+        returnKeyType="done"
+        onSubmitEditing={handleSaveAddress}
+      />
+
+      <ButtonWrapper>
+        <Button
+          title="Salvar Endereço"
+          onPress={handleSaveAddress}
+          loading={addressLoading}
+          disabled={isButtonDisabled}
+          variant="primary"
+        />
+      </ButtonWrapper>
+    </StyledKeyboardAwareScrollView>
+  );
 };
-
-const styles = StyleSheet.create({
-    container: { flex: 1, padding: 16, backgroundColor: theme.colors.neutralTheme.white },
-    title: { fontSize: 24, marginBottom: 24, color: '#000' },
-});
 
 export default CreateAddressScreen;

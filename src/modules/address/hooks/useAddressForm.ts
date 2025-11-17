@@ -1,81 +1,157 @@
 import { useState, useMemo, useCallback } from 'react';
-import { Alert } from 'react-native';
 import axios from 'axios';
 import { useLocation } from '../../location/hooks/useLocation';
 
 export const useAddressForm = () => {
-    const { findCityAndState } = useLocation();
+  const { findCityAndState } = useLocation();
 
-    const [cep, setCep] = useState('');
-    const [street, setStreet] = useState('');
-    const [numberAddress, setNumber] = useState('');
-    const [complement, setComplement] = useState('');
-    const [neighborhood, setNeighborhood] = useState('');
-    const [city, setCity] = useState('');
-    const [uf, setUf] = useState('');
-    const [cityId, setCityId] = useState<number | undefined>();
+  const [values, setValues] = useState({
+    cep: '',
+    street: '',
+    numberAddress: '',
+    complement: '',
+    neighborhood: '',
+    city: '',
+    uf: '',
+  });
 
-    const [cepLoading, setCepLoading] = useState(false);
-    const [isStreetReadOnly, setIsStreetReadOnly] = useState(true);
-    const [isNeighborhoodReadOnly, setIsNeighborhoodReadOnly] = useState(true);
+  const [errors, setErrors] = useState({
+    cep: '',
+    street: '',
+    numberAddress: '',
+    neighborhood: '',
+  });
 
-    const isFormValid = useMemo(() => {
-        return !!cityId && street.trim().length > 0 && numberAddress.trim().length > 0;
-    }, [cityId, street, numberAddress]);
+  const [cityId, setCityId] = useState<number | undefined>();
+  const [cepLoading, setCepLoading] = useState(false);
+  const [apiError, setApiError] = useState('');
+  const [isStreetReadOnly, setIsStreetReadOnly] = useState(true);
+  const [isNeighborhoodReadOnly, setIsNeighborhoodReadOnly] = useState(true);
 
-    const handleCepChange = useCallback(async (newCep: string) => {
-        const cleanedCep = newCep.replace(/[^0-9]/g, '');
-        setCep(cleanedCep);
-        setCityId(undefined);
+  const isFormValid = useMemo(() => {
+    const hasRequiredValues =
+      values.street.trim() &&
+      values.numberAddress.trim() &&
+      values.neighborhood.trim() &&
+      cityId &&
+      values.cep.replace(/\D/g, '').length === 8;
 
-        if (cleanedCep.length < 8) {
-            setStreet(''); setNeighborhood(''); setCity(''); setUf('');
-            setIsStreetReadOnly(true); setIsNeighborhoodReadOnly(true);
-            return;
-        }
+    const hasNoErrors = Object.values(errors).every((error) => !error);
+    return !!hasRequiredValues && hasNoErrors;
+  }, [values, errors, cityId]);
 
-        if (cleanedCep.length === 8) {
-            setCepLoading(true);
-            try {
-                const response = await axios.get(`https://viacep.com.br/ws/${cleanedCep}/json/`);
-                const data = response.data;
+  const handleChange = (field: keyof typeof values, value: string) => {
+    setValues((prev) => ({ ...prev, [field]: value }));
+    if (errors[field as keyof typeof errors]) {
+      setErrors((prev) => ({ ...prev, [field]: '' }));
+    }
+    if (apiError) setApiError('');
+  };
 
-                if (data.erro) {
-                    Alert.alert('Erro', 'CEP não encontrado.');
-                } else {
-                    setStreet(data.logradouro || '');
-                    setNeighborhood(data.bairro || '');
-                    setCity(data.localidade || '');
-                    setUf(data.uf || '');
-                    setIsStreetReadOnly(!!data.logradouro);
-                    setIsNeighborhoodReadOnly(!!data.bairro);
-                    
-                    const locationIds = await findCityAndState(data.localidade, data.uf);
-                    if (locationIds.cityId) {
-                        setCityId(locationIds.cityId);
-                    } else {
-                        Alert.alert('Atenção', 'Cidade não encontrada em nossa base de dados.');
-                    }
-                }
-            } catch (error) {
-                Alert.alert('Erro', 'Não foi possível processar o CEP.');
-            } finally {
-                setCepLoading(false);
+  const validateField = (field: keyof typeof errors, currentValues: typeof values) => {
+    let newError = '';
+    const cepDigits = currentValues.cep.replace(/\D/g, '');
+
+    switch (field) {
+      case 'cep':
+        if (!cepDigits) newError = 'O CEP é obrigatório.';
+        else if (cepDigits.length < 8) newError = 'CEP inválido.';
+        break;
+      case 'numberAddress':
+        if (!currentValues.numberAddress.trim()) newError = 'O número é obrigatório.';
+        break;
+      case 'street':
+        if (!currentValues.street.trim()) newError = 'A rua é obrigatória.';
+        break;
+      case 'neighborhood':
+        if (!currentValues.neighborhood.trim()) newError = 'O bairro é obrigatório.';
+        break;
+    }
+    return newError;
+  };
+
+  const handleBlur = (field: keyof typeof errors) => {
+    setValues((prev) => ({ ...prev, [field]: prev[field].trim() }));
+
+    const trimmedValues = { ...values, [field]: values[field].trim() };
+    const newError = validateField(field, trimmedValues);
+    setErrors((prev) => ({ ...prev, [field]: newError }));
+  };
+
+  const handleCepChange = useCallback(
+    async (newCep: string) => {
+      setValues((prev) => ({ ...prev, cep: newCep }));
+      setApiError('');
+      setCityId(undefined);
+
+      if (errors.cep) {
+        setErrors((prev) => ({ ...prev, cep: '' }));
+      }
+
+      const cleanedCep = newCep.replace(/\D/g, '');
+
+      if (cleanedCep.length < 8) {
+        setValues((prev) => ({
+          ...prev,
+          cep: newCep,
+          street: '',
+          neighborhood: '',
+          city: '',
+          uf: '',
+        }));
+        setIsStreetReadOnly(true);
+        setIsNeighborhoodReadOnly(true);
+        return;
+      }
+
+      if (cleanedCep.length === 8) {
+        setCepLoading(true);
+        try {
+          const response = await axios.get(`https://viacep.com.br/ws/${cleanedCep}/json/`);
+          const data = response.data;
+
+          if (data.erro) {
+            setApiError('CEP não encontrado.');
+            setErrors((prev) => ({ ...prev, cep: 'CEP não encontrado.' }));
+          } else {
+            setValues((prev) => ({
+              ...prev,
+              street: data.logradouro || '',
+              neighborhood: data.bairro || '',
+              city: data.localidade || '',
+              uf: data.uf || '',
+            }));
+            setIsStreetReadOnly(!!data.logradouro);
+            setIsNeighborhoodReadOnly(!!data.bairro);
+
+            const locationIds = await findCityAndState(data.localidade, data.uf);
+            if (locationIds.cityId) {
+              setCityId(locationIds.cityId);
+            } else {
+              setApiError('Cidade não encontrada em nossa base de dados.');
             }
+          }
+        } catch (error) {
+          setApiError('Não foi possível processar o CEP.');
+        } finally {
+          setCepLoading(false);
         }
-    }, [findCityAndState]);
+      }
+    },
+    [findCityAndState, errors.cep],
+  );
 
-    const addressState = { cep, street, numberAddress, complement, neighborhood, city, uf, cityId };
-
-    const addressSetters = { setNumber, setComplement, setNeighborhood, setStreet };
-
-    return {
-        addressState,
-        addressSetters,
-        isFormValid,
-        cepLoading,
-        isStreetReadOnly,
-        isNeighborhoodReadOnly,
-        handleCepChange,
-    };
+  return {
+    addressState: values,
+    errors,
+    apiError,
+    cityId,
+    isFormValid,
+    cepLoading,
+    isStreetReadOnly,
+    isNeighborhoodReadOnly,
+    handleChange,
+    handleBlur,
+    handleCepChange,
+  };
 };
