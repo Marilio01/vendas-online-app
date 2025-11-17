@@ -1,6 +1,5 @@
 import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
 import { useEffect } from 'react';
-
 import { MethodEnum } from '../../../enums/methods.enum';
 import { URL_USER } from '../../../shared/constants/urls';
 import { MenuUrl } from '../../../shared/enums/MenuUrl.enum';
@@ -9,56 +8,60 @@ import { useRequests } from '../../../shared/hooks/useRequests';
 import { UserType } from '../../../shared/types/userType';
 import { useUserReducer } from '../../../store/reducers/userReducer/useUserReducer';
 import { ContainerSplash, ImagelogoSplash } from '../styles/splash.style';
-import { FirstScreen } from '../../firstScreen';
+import { useCart } from '../../cart/hooks/useCart';
 
 const TIME_SLEEP = 2500;
 
 const Splash = () => {
-    const { reset } = useNavigation<NavigationProp<ParamListBase>>();
-    const { request } = useRequests();
-    const { setUser } = useUserReducer();
+  const { reset } = useNavigation<NavigationProp<ParamListBase>>();
+  const { request } = useRequests();
+  const { setUser } = useUserReducer();
 
-    useEffect(() => {
-        const findUser = async (): Promise<undefined | UserType> => {
-            let returnUser;
-            const token = await getAuthorizationToken();
-            if (token) {
-                returnUser = await request<UserType>({
-                    url: URL_USER,
-                    method: MethodEnum.GET,
-                    saveGlobal: setUser,
-                });
-            }
+  const { refreshCart } = useCart();
 
-            return returnUser;
-        };
-        const verifyLogin = async () => {
-            const [returnUser] = await Promise.all([
-                findUser(),
-                new Promise<void>((r) => setTimeout(r, TIME_SLEEP)),
-            ]);
+  useEffect(() => {
+    const findUser = async (): Promise<undefined | UserType> => {
+      let returnUser;
+      const token = await getAuthorizationToken();
+      if (token) {
+        returnUser = await request<UserType>({
+          url: URL_USER,
+          method: MethodEnum.GET,
+          saveGlobal: setUser,
+        });
+      }
 
-            if (returnUser) {
-                reset({
-                    index: 0,
-                    routes: [{ name: MenuUrl.HOME }],
-                });
-            } else {
-                reset({
-                    index: 0,
-                    routes: [{ name: MenuUrl.FIRST_SCREEN }],
-                });
-            }
-        };
+      return returnUser;
+    };
+    const verifyLogin = async () => {
+      const [returnUser] = await Promise.all([
+        findUser(),
+        new Promise<void>((r) => setTimeout(r, TIME_SLEEP)),
+      ]);
 
-        verifyLogin();
-    }, []);
+      if (returnUser) {
+        await refreshCart();
 
-    return (
-        <ContainerSplash>
-            <ImagelogoSplash resizeMode="contain" source={require('../../../assets/images/logo.jpg')} />
-        </ContainerSplash>
-    );
+        reset({
+          index: 0,
+          routes: [{ name: 'AppTabs' }],
+        });
+      } else {
+        reset({
+          index: 0,
+          routes: [{ name: MenuUrl.FIRST_SCREEN }],
+        });
+      }
+    };
+
+    verifyLogin();
+  }, []);
+
+  return (
+    <ContainerSplash>
+      <ImagelogoSplash resizeMode="contain" source={require('../../../assets/images/logo.jpg')} />
+    </ContainerSplash>
+  );
 };
 
 export default Splash;
