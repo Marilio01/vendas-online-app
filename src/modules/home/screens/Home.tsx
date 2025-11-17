@@ -1,81 +1,67 @@
 import React from 'react';
-import { View, FlatList, ActivityIndicator, SafeAreaView } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Input from '../../../shared/components/input/Input';
-import ProductThumbnail from '../../../shared/components/productThumbnail.tsx/ProductThumbnail';
-import Text from '../../../shared/components/text/Text';
+import { FlatList, ActivityIndicator } from 'react-native';
+import ProductThumbnail from '../../../shared/components/productThumbnail/ProductThumbnail';
 import { theme } from '../../../shared/themes/theme';
 import { useHome } from '../hooks/useHome';
-import { HomeContainer } from '../styles/home.style';
+import {
+  Container,
+  SearchContainer,
+  SearchInputWrapper,
+  SearchPlaceholder,
+  SearchIcon,
+  CategoryBlock,
+  CategoryTitle,
+  ProductItemWrapper,
+  LoadingContainer,
+} from '../styles/home.style';
 import { ProductType } from '../../../shared/types/ProductType';
 
 const Home = () => {
-  const {
-    search,
-    loading,
-    groupedProducts,
-    handleOnChangeSearch,
-    handleGoToSearchProduct,
-  } = useHome();
-
-  const insets = useSafeAreaInsets();
+  const { loading, groupedProducts, handleGoToSearchProduct } = useHome();
 
   const renderProduct = ({ item }: { item: ProductType }) => (
-    <View style={{ marginHorizontal: 8 }}>
+    <ProductItemWrapper>
       <ProductThumbnail product={item} />
-    </View>
+    </ProductItemWrapper>
   );
 
-  const renderCategoryBlock = ({ item }: any) => (
-    <View style={{ marginBottom: 24 }}>
-      <Text style={{ fontSize: 22, fontWeight: 'bold', paddingHorizontal: 16 }}>
-        {item.title}
-      </Text>
+  const renderCategoryBlock = ({ item }: { item: { title: string; data: ProductType[] } }) => (
+    <CategoryBlock>
+      <CategoryTitle>{item.title}</CategoryTitle>
       <FlatList
         horizontal
         data={item.data}
         renderItem={renderProduct}
         keyExtractor={(prod) => prod.id.toString()}
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 8 }}
+        contentContainerStyle={{ paddingHorizontal: 16 }}
       />
-    </View>
+    </CategoryBlock>
   );
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: theme.colors.neutralTheme.white,
-        paddingTop: insets.top,
-      }}
-    >
-      <HomeContainer>
-        <Input
-          value={search}
-          onChange={handleOnChangeSearch}
-          onPressIconRight={handleGoToSearchProduct}
-          iconRight="search"
-          placeholder="Pesquisar produto"
-        />
-      </HomeContainer>
+    <Container edges={['top', 'left', 'right']}>
+      <SearchContainer>
+        <SearchInputWrapper onPress={handleGoToSearchProduct}>
+          <SearchIcon name="search" />
+          <SearchPlaceholder>Pesquisar produto</SearchPlaceholder>
+        </SearchInputWrapper>
+      </SearchContainer>
 
       {loading ? (
-        <ActivityIndicator
-          style={{ marginTop: 32 }}
-          size="large"
-          color={theme.colors.mainTheme.primary}
-        />
+        <LoadingContainer>
+          <ActivityIndicator size="large" color={theme.colors.primary.main} />
+        </LoadingContainer>
       ) : (
         <FlatList
           data={groupedProducts}
           keyExtractor={(item) => item.title}
           renderItem={renderCategoryBlock}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 100 }}
+          contentContainerStyle={{ paddingBottom: 100, paddingTop: 16 }}
         />
       )}
-    </SafeAreaView>
+    </Container>
   );
 };
 

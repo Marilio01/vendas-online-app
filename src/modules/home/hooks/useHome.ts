@@ -57,7 +57,7 @@ export const useHome = () => {
     );
 
     if (!search) {
-        return categories
+      return categories
         .map((category) => ({
           title: category.name,
           data: products.filter((product) => product.category?.id === category.id),
@@ -66,12 +66,11 @@ export const useHome = () => {
     }
 
     return [
-        {
-            title: 'Resultado da Pesquisa',
-            data: filteredProducts
-        }
-    ]
-
+      {
+        title: 'Resultado da Pesquisa',
+        data: filteredProducts,
+      },
+    ];
   }, [search, products, categories]);
 
   return {
