@@ -1,127 +1,132 @@
-
 import React, { useMemo, useState } from 'react';
-import { View, FlatList, ActivityIndicator, Image, Modal, TouchableOpacity } from 'react-native';
+import { View, FlatList, Modal } from 'react-native';
 import { useNavigation, NavigationProp, ParamListBase } from '@react-navigation/native';
-
 import { useCart } from '../hooks/useCart';
-import Text from '../../../shared/components/text/Text';
 import Button from '../../../shared/components/button/Button';
-import CartQuantityManager from './CartQuantityManager';
 import { theme } from '../../../shared/themes/theme';
 import { convertNumberToMoney } from '../../../shared/functions/money';
 import { CartProductType } from '../../../shared/types/cartProductType';
-import { textTypes } from '../../../shared/components/text/textTypes';
-import { MenuUrl } from '../../../shared/enums/MenuUrl.enum';
-import { Icon } from '../../../shared/components/icon/Icon';
-import styles from '../styles/cart.style';
-
+import Icon from 'react-native-vector-icons/Feather';
+import * as S from '../styles/cart.style';
 
 const Cart = () => {
-    const { navigate } = useNavigation<NavigationProp<ParamListBase>>();
-    const { cart, loading, updateProductAmount, removeProductFromCart } = useCart();
+  const { navigate } = useNavigation<NavigationProp<ParamListBase>>();
+  const { cart, updateProductAmount, removeProductFromCart } = useCart();
 
-    const [itemToDelete, setItemToDelete] = useState<CartProductType | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<CartProductType | null>(null);
 
-    const cartItems = useMemo(() => cart?.cartProduct || [], [cart]);
+  const cartItems = useMemo(() => {
+    const items = cart?.cartProduct || [];
+    return items.slice().sort((a, b) => b.id - a.id);
+  }, [cart]);
 
-    const totalValue = useMemo(() => {
-        return cartItems.reduce((acc, item) => acc + (item.product.price * item.amount), 0);
-    }, [cartItems]);
-
-
-    const handleGoToCheckout = () => {
-        navigate('Checkout');
-    };
-
-    const handleConfirmDelete = () => {
-        if (itemToDelete) {
-            removeProductFromCart(itemToDelete.product.id);
-            setItemToDelete(null);
-        }
-    };
-
-
-    const renderCartItem = ({ item }: { item: CartProductType }) => (
-        <View style={styles.itemContainer}>
-            <Image source={{ uri: item.product.image }} style={styles.productImage} />
-
-
-            <View style={styles.detailsContainer}>
-
-                <View style={styles.infoContainer}>
-                    <Text numberOfLines={2} style={styles.productName}>{item.product.name}</Text>
-                    <Text color={theme.colors.mainTheme.primary} type={textTypes.PARAGRAPH_SEMI_BOLD}>
-                        {convertNumberToMoney(item.product.price)}
-                    </Text>
-                </View>
-
-
-                <View style={styles.quantityContainer}>
-                    <CartQuantityManager
-                        amount={item.amount}
-                        onIncrease={() => updateProductAmount(item, item.amount + 1)}
-                        onDecrease={() => updateProductAmount(item, item.amount - 1)}
-                    />
-                </View>
-
-
-                <TouchableOpacity style={styles.deleteButton} onPress={() => setItemToDelete(item)}>
-                    <Icon name="bin2" size={24} color={theme.colors.redTheme.red} />
-                </TouchableOpacity>
-            </View>
-        </View>
+  const totalValue = useMemo(() => {
+    return (cart?.cartProduct || []).reduce(
+      (acc, item) => acc + item.product.price * item.amount,
+      0,
     );
+  }, [cart]);
 
-    const renderEmptyCart = () => (
-        <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>Seu carrinho está vazio.</Text>
-        </View>
-    );
+  const handleGoToCheckout = () => {
+    navigate('Checkout');
+  };
 
-    return (
-        <View style={styles.container}>
-            <Modal
-                transparent={true}
-                visible={!!itemToDelete}
-                onRequestClose={() => setItemToDelete(null)}
-                animationType="fade"
+  const handleConfirmDelete = () => {
+    if (itemToDelete) {
+      removeProductFromCart(itemToDelete.product.id);
+      setItemToDelete(null);
+    }
+  };
+
+  const renderCartItem = ({ item }: { item: CartProductType }) => (
+    <S.ItemContainer>
+      <S.ProductImage source={{ uri: item.product.image }} />
+
+      <S.DetailsContainer>
+        <S.ProductTopRow>
+          <S.ProductName numberOfLines={2}>{item.product.name}</S.ProductName>
+          <S.DeleteButton onPress={() => setItemToDelete(item)}>
+            <Icon name="trash-2" size={20} color={theme.colors.semantic.error} />
+          </S.DeleteButton>
+        </S.ProductTopRow>
+
+        <S.QuantityAndDeleteRow>
+          <S.ProductPrice>{convertNumberToMoney(item.product.price)}</S.ProductPrice>
+
+          <S.CartQuantityWrapper>
+            <S.CartQuantityButton
+              onPress={() => {
+                if (item.amount === 1) {
+                  setItemToDelete(item);
+                } else {
+                  updateProductAmount(item, item.amount - 1);
+                }
+              }}
             >
-                <View style={styles.modalOverlay}>
-                    <View style={styles.modalContainer}>
-                        <Text style={styles.modalTitle}>Remover Item</Text>
-                        <Text style={styles.modalText}>Tem certeza que deseja remover este item do carrinho?</Text>
-                            <Button title="Cancelar" onPress={() => setItemToDelete(null)} variant="secondary" />
-                            <Button title="Sim, remover" onPress={handleConfirmDelete} variant="danger" />
-                        </View>
-                </View>
-            </Modal>
+              <Icon name="minus" size={16} color={theme.colors.primary.main} />
+            </S.CartQuantityButton>
 
-            <FlatList
-                data={cartItems}
-                renderItem={renderCartItem}
-                keyExtractor={(item) => item.id.toString()}
-                ListEmptyComponent={renderEmptyCart}
-                contentContainerStyle={styles.listContent}
-            />
+            <S.CartQuantityAmount>{item.amount}</S.CartQuantityAmount>
 
-            {cartItems.length > 0 && (
-                <View style={styles.footer}>
-                    <View style={styles.totalContainer}>
-                        <Text style={styles.totalText}>Total:</Text>
-                        <Text style={styles.totalValue}>{convertNumberToMoney(totalValue)}</Text>
-                    </View>
-                    <Button
-                        title="Finalizar Compra"
-                        onPress={handleGoToCheckout}
-                        variant="warning"
-                        borderRadius="8px"
-                    />
-                </View>
-            )}
-        </View>
-    );
+            <S.CartQuantityButton onPress={() => updateProductAmount(item, item.amount + 1)}>
+              <Icon name="plus" size={16} color={theme.colors.primary.main} />
+            </S.CartQuantityButton>
+          </S.CartQuantityWrapper>
+        </S.QuantityAndDeleteRow>
+      </S.DetailsContainer>
+    </S.ItemContainer>
+  );
+
+  const renderEmptyCart = () => (
+    <S.EmptyContainer>
+      <Icon name="shopping-cart" size={48} color={theme.colors.neutral.disabled} />
+      <S.EmptyText>Seu carrinho está vazio.</S.EmptyText>
+    </S.EmptyContainer>
+  );
+
+  return (
+    <S.Container>
+      <Modal
+        transparent={true}
+        visible={!!itemToDelete}
+        onRequestClose={() => setItemToDelete(null)}
+        animationType="fade"
+      >
+        <S.ModalOverlay>
+          <S.ModalContainer>
+            <S.ModalTitle>Remover Item</S.ModalTitle>
+            <S.ModalText>Tem certeza que deseja remover este item do carrinho?</S.ModalText>
+            <Button title="Cancelar" onPress={() => setItemToDelete(null)} variant="secondary" />
+            <View style={{ height: 8 }} />
+            <Button title="Sim, remover" onPress={handleConfirmDelete} variant="danger" />
+          </S.ModalContainer>
+        </S.ModalOverlay>
+      </Modal>
+
+      <FlatList
+        data={cartItems}
+        renderItem={renderCartItem}
+        keyExtractor={(item) => item.id.toString()}
+        ListEmptyComponent={renderEmptyCart}
+        contentContainerStyle={{ flexGrow: 1 }}
+      />
+
+      {cartItems.length > 0 && (
+        <S.Footer>
+          <S.TotalContainer>
+            <S.TotalText>Total:</S.TotalText>
+            <S.TotalValue>{convertNumberToMoney(totalValue)}</S.TotalValue>
+          </S.TotalContainer>
+          <Button
+            title="Ir para Checkout"
+            onPress={handleGoToCheckout}
+            variant="primary"
+            borderRadius="8px"
+          />
+        </S.Footer>
+      )}
+    </S.Container>
+  );
 };
-
-
 
 export default Cart;

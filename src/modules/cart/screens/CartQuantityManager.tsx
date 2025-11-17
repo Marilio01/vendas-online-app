@@ -1,45 +1,44 @@
-
 import React from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
-import { Icon } from '../../../shared/components/icon/Icon';
-import Text from '../../../shared/components/text/Text';
+import Icon from 'react-native-vector-icons/Feather';
 import { theme } from '../../../shared/themes/theme';
-import { QuantityManagerContainer } from '../../../shared/components/productThumbnail.tsx/productThumbnail.style';
+import { Amount, Button, Container } from '../styles/CartQuantityManager.style';
 
 interface CartQuantityManagerProps {
   amount: number;
   onIncrease: () => void;
   onDecrease: () => void;
-};
+  onRemoveRequest: () => void;
+}
 
-const CartQuantityManager = ({ amount, onIncrease, onDecrease }: CartQuantityManagerProps) => {
+const CartQuantityManager = ({
+  amount,
+  onIncrease,
+  onDecrease,
+  onRemoveRequest,
+}: CartQuantityManagerProps) => {
+  const iconColor = theme.colors.primary.main;
+
   return (
-   
-    <QuantityManagerContainer>
-      <TouchableOpacity style={styles.button} onPress={onDecrease}>
-        <Icon name="minus" size={16} color={theme.colors.neutralTheme.white} />
-      </TouchableOpacity>
+    <Container>
+      <Button
+        onPress={() => {
+          if (amount === 1) {
+            onRemoveRequest();
+          } else {
+            onDecrease();
+          }
+        }}
+      >
+        <Icon name="minus" size={16} color={theme.colors.primary.main} />
+      </Button>
 
-      <Text style={styles.amount}>{amount}</Text>
+      <Amount>{amount}</Amount>
 
-      <TouchableOpacity style={styles.button} onPress={onIncrease}>
-        <Icon name="plus" size={16} color={theme.colors.neutralTheme.white} />
-      </TouchableOpacity>
-    </QuantityManagerContainer>
+      <Button onPress={onIncrease}>
+        <Icon name="plus" size={16} color={theme.colors.primary.main} />
+      </Button>
+    </Container>
   );
 };
-
-
-const styles = StyleSheet.create({
-  button: {
-    paddingHorizontal: 20, 
-    paddingVertical: 8,
-  },
-  amount: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: theme.colors.neutralTheme.white,
-  }
-});
 
 export default CartQuantityManager;
