@@ -1,87 +1,167 @@
-import React from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { View, ScrollView, ActivityIndicator } from 'react-native';
-import Text from '../../../shared/components/text/Text';
+import React, { useState } from 'react';
+import { View, ActivityIndicator, Modal } from 'react-native';
 import Button from '../../../shared/components/button/Button';
-import { AddressItem } from '../../address/screens/AddressList';
 import { convertNumberToMoney } from '../../../shared/functions/money';
 import { theme } from '../../../shared/themes/theme';
-import { styles } from '../styles/checkout.style';
 import { useCheckout } from '../hooks/useCheckout';
+import * as S from '../styles/checkout.style';
+import { CartProductType } from '../../../shared/types/cartProductType';
+import Icon from 'react-native-vector-icons/Feather';
 
 const CheckoutScreen = () => {
   const {
-    addresses,
+    selectedAddress,
+    selectedPaymentMethod,
+    paymentMethodName,
     addressLoading,
-    selectedAddressId,
-    setSelectedAddressId,
-    handleContinueToPayment,
-    handleDeleteSuccess,
     cartItems,
     totalValue,
-    handleGoToCreateAddress,
+    handleFinalizeOrder,
+    handleGoToAddressList,
+    handleGoToPaymentList,
+    updateProductAmount,
+    removeProductFromCart,
   } = useCheckout();
 
+  const [itemToDelete, setItemToDelete] = useState<CartProductType | null>(null);
+
+  const handleConfirmDelete = () => {
+    if (itemToDelete) {
+      removeProductFromCart(itemToDelete.product.id);
+      setItemToDelete(null);
+    }
+  };
+
+  if (addressLoading && !selectedAddress) {
+    return (
+      <S.FullScreenLoader>
+        <ActivityIndicator size="large" color={theme.colors.primary.main} />
+      </S.FullScreenLoader>
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }}
+    <S.Container>
+      <Modal
+        transparent
+        visible={!!itemToDelete}
+        onRequestClose={() => setItemToDelete(null)}
+        animationType="fade"
       >
-        <Text style={styles.title}>Revisão do Pedido</Text>
+        <S.ModalOverlay>
+          <S.ModalContainer>
+            <S.ModalTitle>Remover Item</S.ModalTitle>
+            <S.ModalText>Tem certeza que deseja remover este item do carrinho?</S.ModalText>
+            <Button title="Cancelar" onPress={() => setItemToDelete(null)} variant="secondary" />
+            <View style={{ height: 8 }} />
+            <Button title="Sim, remover" onPress={handleConfirmDelete} variant="danger" />
+          </S.ModalContainer>
+        </S.ModalOverlay>
+      </Modal>
 
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Endereço de Entrega</Text>
-          {addressLoading ? (
-            <ActivityIndicator size="large" color={theme.colors.mainTheme.primary} />
-          ) : (
-            addresses.map((item) => (
-              <AddressItem
-                key={item.id}
-                item={item}
-                selectedAddressId={selectedAddressId}
-                onSelectAddress={setSelectedAddressId}
-                onDeleteSuccess={handleDeleteSuccess}
-              />
-            ))
-          )}
-          <View style={{ marginTop: 8 }} />
-          <Button
-            title="Novo Endereço"
-            variant="secondary"
-            onPress={handleGoToCreateAddress}
-            borderRadius="8px"
-          />
-        </View>
+      <S.ScrollView>
+        <S.SummaryCard>
+          <S.SummaryRow>
+            <S.SummaryLabel>Total</S.SummaryLabel>
+            <S.SummaryValue>{convertNumberToMoney(totalValue)}</S.SummaryValue>
+          </S.SummaryRow>
+        </S.SummaryCard>
 
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Resumo do Pedido</Text>
-          {cartItems.map((item) => (
-            <View key={item.id} style={styles.summaryItem}>
-              <Text>
-                {item.amount}x {item.product.name}
-              </Text>
-              <Text>{convertNumberToMoney(item.product.price * item.amount)}</Text>
-            </View>
+        <S.SectionButton onPress={handleGoToPaymentList}>
+          <S.SectionButtonTitle>Forma de Pagamento</S.SectionButtonTitle>
+          <S.SectionButtonContent>
+            <S.SectionButtonTextWrapper>
+              {selectedPaymentMethod ? (
+                <S.SectionButtonText>{paymentMethodName}</S.SectionButtonText>
+              ) : (
+                <S.AddressPromptText>Nenhuma forma de pagamento selecionada.</S.AddressPromptText>
+              )}
+            </S.SectionButtonTextWrapper>
+            <S.SectionButtonLink>
+              {selectedPaymentMethod ? 'Alterar' : 'Selecionar'}
+            </S.SectionButtonLink>
+          </S.SectionButtonContent>
+        </S.SectionButton>
+
+        <S.SectionButton onPress={handleGoToAddressList}>
+          <S.SectionButtonTitle>Endereço de Entrega</S.SectionButtonTitle>
+          <S.SectionButtonContent>
+            <S.SectionButtonTextWrapper>
+              {addressLoading ? (
+                <ActivityIndicator size="small" color={theme.colors.primary.main} />
+              ) : selectedAddress ? (
+                <>
+                  <S.SectionButtonText>
+                    {`${selectedAddress.street}, ${selectedAddress.numberAddress}`}
+                  </S.SectionButtonText>
+                  <S.SectionButtonText>
+                    {`${selectedAddress.neighborhood} - ${selectedAddress.city?.name}/${selectedAddress.city?.state?.uf}`}
+                  </S.SectionButtonText>
+                </>
+              ) : (
+                <S.AddressPromptText>Nenhum endereço selecionado.</S.AddressPromptText>
+              )}
+            </S.SectionButtonTextWrapper>
+            <S.SectionButtonLink>{selectedAddress ? 'Alterar' : 'Selecionar'}</S.SectionButtonLink>
+          </S.SectionButtonContent>
+        </S.SectionButton>
+
+        <S.Card>
+          <S.CardTitle>Produtos</S.CardTitle>
+          {cartItems.map((item, index) => (
+            <S.ProductItemContainer
+              key={item.id}
+              style={{ borderBottomWidth: index === cartItems.length - 1 ? 0 : 1 }}
+            >
+              <S.ProductImage source={{ uri: item.product.image }} />
+              <S.ProductDetails>
+                <S.ProductInfoRow>
+                  <S.ProductName numberOfLines={1}>{item.product.name}</S.ProductName>
+                  <S.ProductPriceInline>
+                    {convertNumberToMoney(item.product.price)}
+                  </S.ProductPriceInline>
+                </S.ProductInfoRow>
+
+                <S.ProductActionRow>
+                  <S.CartQuantityWrapper>
+                    <S.CartQuantityButton
+                      onPress={() => {
+                        if (item.amount === 1) {
+                          setItemToDelete(item);
+                        } else {
+                          updateProductAmount(item, item.amount - 1);
+                        }
+                      }}
+                    >
+                      <Icon name="minus" size={16} color={theme.colors.primary.main} />
+                    </S.CartQuantityButton>
+                    <S.CartQuantityAmount>{item.amount}</S.CartQuantityAmount>
+                    <S.CartQuantityButton
+                      onPress={() => updateProductAmount(item, item.amount + 1)}
+                    >
+                      <Icon name="plus" size={16} color={theme.colors.primary.main} />
+                    </S.CartQuantityButton>
+                  </S.CartQuantityWrapper>
+                  <S.DeleteButton onPress={() => setItemToDelete(item)}>
+                    <Icon name="trash-2" size={20} color={theme.colors.semantic.error} />
+                  </S.DeleteButton>
+                </S.ProductActionRow>
+              </S.ProductDetails>
+            </S.ProductItemContainer>
           ))}
-          <View style={styles.summaryDivider} />
-          <View style={styles.summaryTotal}>
-            <Text>Total:</Text>
-            <Text>{convertNumberToMoney(totalValue)}</Text>
-          </View>
-        </View>
-      </ScrollView>
+        </S.Card>
+      </S.ScrollView>
 
-      <View style={styles.footer}>
+      <S.Footer>
         <Button
-          title="Ir para Pagamento"
-          onPress={handleContinueToPayment}
-          disabled={!selectedAddressId}
-          variant="warning"
+          title="Finalizar Pedido"
+          onPress={handleFinalizeOrder}
+          disabled={!selectedAddress || !selectedPaymentMethod || cartItems.length === 0}
+          variant="primary"
           borderRadius="8px"
         />
-      </View>
-    </View>
+      </S.Footer>
+    </S.Container>
   );
 };
 

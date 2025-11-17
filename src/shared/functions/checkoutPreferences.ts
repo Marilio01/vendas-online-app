@@ -1,32 +1,34 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { PaymentType } from '../../modules/payment/hooks/usePayment';
 
-const STORAGE_KEY = '@lastCheckoutPreferences';
+const CHECKOUT_PREFERENCES_KEY = '@Checkout:preferences';
 
 export const saveCheckoutPreferences = async (
   addressId: number | null,
-  paymentMethod: string | null,
+  paymentMethod: PaymentType | null,
 ) => {
   try {
     const data = JSON.stringify({ addressId, paymentMethod });
-    await AsyncStorage.setItem(STORAGE_KEY, data);
-  } catch (error) {
-    console.error('Erro ao salvar preferências do checkout:', error);
+    await AsyncStorage.setItem(CHECKOUT_PREFERENCES_KEY, data);
+  } catch (e) {
+    console.error('Failed to save checkout preferences', e);
   }
 };
 
-export const loadCheckoutPreferences = async (): Promise<{
-  addressId?: number;
-  paymentMethod?: string;
-} | null> => {
+export const loadCheckoutPreferences = async () => {
   try {
-    const data = await AsyncStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : null;
-  } catch (error) {
-    console.error('Erro ao carregar preferências do checkout:', error);
+    const data = await AsyncStorage.getItem(CHECKOUT_PREFERENCES_KEY);
+    return data != null ? JSON.parse(data) : null;
+  } catch (e) {
+    console.error('Failed to load checkout preferences', e);
     return null;
   }
 };
 
 export const clearCheckoutPreferences = async () => {
-  await AsyncStorage.removeItem(STORAGE_KEY);
+  try {
+    await AsyncStorage.removeItem(CHECKOUT_PREFERENCES_KEY);
+  } catch (e) {
+    console.error('Failed to clear checkout preferences', e);
+  }
 };
