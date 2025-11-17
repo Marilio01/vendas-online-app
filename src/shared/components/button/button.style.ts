@@ -1,6 +1,6 @@
 import styled, { DefaultTheme, css } from 'styled-components/native';
 
-type ButtonVariant = 'primary' | 'secondary' | 'success' | 'danger' | 'warning';
+type ButtonVariant = 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'brand';
 
 interface ButtonProps {
   variant?: ButtonVariant;
@@ -21,14 +21,14 @@ export const StyledButton = styled.TouchableOpacity<ButtonProps>`
 
   background-color: ${({ variant = 'primary', disabled, theme }: PropsWithTheme) => {
     if (disabled) {
-      return theme.colors.grayTheme.grayDisabled;
+      return theme.colors.neutral.disabled;
     }
     return theme.buttons[variant].background;
   }};
 
   border-width: ${({ variant = 'primary', theme }: PropsWithTheme) =>
     theme.buttons[variant].border ? '1px' : '0px'};
-  
+
   border-color: ${({ variant = 'primary', theme }: PropsWithTheme) =>
     theme.buttons[variant].border || 'transparent'};
 
@@ -36,7 +36,7 @@ export const StyledButton = styled.TouchableOpacity<ButtonProps>`
     withShadow &&
     css`
       elevation: 5;
-      shadow-color: ${theme.colors.neutralTheme.black};
+      shadow-color: ${theme.colors.neutral.surface};
       shadow-offset: 0px 4px;
       shadow-opacity: 0.25;
       shadow-radius: 6px;
@@ -46,7 +46,10 @@ export const StyledButton = styled.TouchableOpacity<ButtonProps>`
 export const ButtonText = styled.Text<ButtonProps>`
   font-weight: 500;
   font-size: 15px;
-  color: ${({ variant = 'primary', theme }: PropsWithTheme) => {
+  color: ${({ variant = 'primary', disabled, theme }: PropsWithTheme) => {
+    if (disabled) {
+      return theme.colors.text.secondary;
+    }
     return theme.buttons[variant].text;
   }};
 `;
