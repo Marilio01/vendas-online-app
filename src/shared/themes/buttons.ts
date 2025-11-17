@@ -1,4 +1,4 @@
-import { mainTheme, neutralTheme, greenTheme, redTheme, orangeTheme, blueTheme } from './colors';
+import { colors } from './colors';
 
 interface ButtonTheme {
   background: string;
@@ -6,28 +6,32 @@ interface ButtonTheme {
   border?: string;
 }
 
-type ButtonVariant = 'primary' | 'secondary' | 'success' | 'danger' | 'warning';
+type ButtonVariant = 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'brand';
 
 export const buttonsTheme: Record<ButtonVariant, ButtonTheme> = {
   primary: {
-    background: blueTheme.primary,
-    text: neutralTheme.white,
+    background: colors.primary.main,
+    text: colors.neutral.surface,
   },
   secondary: {
-    background: 'transparent',
-    text: blueTheme.primary,
-    border: blueTheme.primary,
+    background: colors.neutral.surface,
+    text: colors.primary.main,
+    border: colors.primary.main,
   },
   success: {
-    background: greenTheme.green,
-    text: neutralTheme.white,
+    background: colors.semantic.success,
+    text: colors.neutral.surface,
   },
   danger: {
-    background: redTheme.red,
-    text: neutralTheme.white,
+    background: colors.semantic.error,
+    text: colors.neutral.surface,
   },
   warning: {
-    background: mainTheme.primary,
-    text: neutralTheme.white,
+    background: colors.semantic.warning,
+    text: colors.neutral.surface,
+  },
+  brand: {
+    background: colors.brand.red,
+    text: colors.neutral.surface,
   },
 };
