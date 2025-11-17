@@ -104,7 +104,7 @@ export const useRequests = () => {
       setLoading(true);
       try {
         const result = await connectionAPIPost<ReturnLogin>(
-          'http://192.168.255.101:8080/auth',
+          'http://10.0.0.107:8080/auth',
           body,
         );
         setAuthorizationToken(result.accessToken);
