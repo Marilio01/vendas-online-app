@@ -1,9 +1,9 @@
 import styled from 'styled-components/native';
-import Text from '../../../shared/components/text/Text';
+import { theme } from '../../../shared/themes/theme';
 
 export const Container = styled.View`
   flex: 1;
-  background-color: ${(props: any) => props.theme.colors.neutralTheme.white};
+  background-color: ${theme.colors.neutral.background};
 `;
 
 export const ContentContainer = styled.ScrollView.attrs({
@@ -19,11 +19,11 @@ export const FormSection = styled.View`
   margin-bottom: 16px;
 `;
 
-export const Title = styled(Text)`
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 12px;
-  color: ${(props: any) => props.theme.colors.neutralTheme.black};
+export const Title = styled.Text`
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: ${theme.colors.text.primary};
 `;
 
 export const ButtonWrapper = styled.View`

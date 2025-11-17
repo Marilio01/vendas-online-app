@@ -84,6 +84,7 @@ export const ChangePasswordScreen = () => {
               onPress={handleChangePassword}
               disabled={disabledButton || loading}
               loading={loading}
+              variant="primary"
             />
           </ButtonWrapper>
         </FormSection>

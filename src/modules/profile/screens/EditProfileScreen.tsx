@@ -21,7 +21,7 @@ export const EditProfileScreen = () => {
     <Container>
       <ContentContainer>
         <FormSection>
-          <Title>Alterar Dados</Title>
+          <Title>Editar Perfil</Title>
 
           <FloatingLabelInput
             label="Nome"
@@ -54,6 +54,7 @@ export const EditProfileScreen = () => {
               onPress={handleUpdateUser}
               disabled={disabledButton || loading}
               loading={loading}
+              variant="primary"
             />
           </ButtonWrapper>
         </FormSection>
