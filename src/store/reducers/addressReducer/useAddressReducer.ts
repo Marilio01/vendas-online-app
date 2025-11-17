@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '../../hooks';
-import { setAddressesAction } from './index';
+import { setAddressesAction, clearAddressesAction } from './index';
 import { AddressType } from '../../../shared/types/AddressType';
 
 export const useAddressReducer = () => {
@@ -11,8 +11,13 @@ export const useAddressReducer = () => {
     dispatch(setAddressesAction(currentAddresses));
   };
 
+  const clearAddresses = () => {
+    dispatch(clearAddressesAction());
+  };
+
   return {
     addresses,
     setAddresses,
+    clearAddresses,
   };
 };

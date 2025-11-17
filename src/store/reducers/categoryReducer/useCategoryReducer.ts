@@ -11,7 +11,7 @@ export const useCategoryReducer = () => {
     dispatch(setCategoriesAction(currentCategories));
   };
 
-   const setCategory = (currentCategory: CategoryType) => {
+  const setCategory = (currentCategory: CategoryType) => {
     dispatch(setCategoryAction(currentCategory));
   };
 

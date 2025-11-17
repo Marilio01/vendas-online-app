@@ -16,9 +16,12 @@ export const addressSlice = createSlice({
     setAddressesAction: (state, action: PayloadAction<AddressType[]>) => {
       state.addresses = action.payload;
     },
+    clearAddressesAction: (state) => {
+      state.addresses = initialState.addresses;
+    },
   },
 });
 
-export const { setAddressesAction } = addressSlice.actions;
+export const { setAddressesAction, clearAddressesAction } = addressSlice.actions;
 
 export default addressSlice.reducer;

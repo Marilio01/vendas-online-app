@@ -1,25 +1,27 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
 import { UserType } from '../../../shared/types/userType';
 
 interface UserStore {
-    user?: UserType;
+  user?: UserType;
 }
 
 const initialState: UserStore = {
-    user: undefined,
+  user: undefined,
 };
 
 export const userSlice = createSlice({
-    name: 'userReducer',
-    initialState,
-    reducers: {
-        setUserAction: (state, action: PayloadAction<UserType>) => {
-            state.user = action.payload;
-        },
+  name: 'userReducer',
+  initialState,
+  reducers: {
+    setUserAction: (state, action: PayloadAction<UserType>) => {
+      state.user = action.payload;
     },
+    clearUserAction: (state) => {
+      state.user = initialState.user;
+    },
+  },
 });
 
-export const { setUserAction } = userSlice.actions;
+export const { setUserAction, clearUserAction } = userSlice.actions;
 
 export default userSlice.reducer;

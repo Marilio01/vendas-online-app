@@ -19,7 +19,7 @@ export const counterSlice = createSlice({
     setCategoriesAction: (state, action: PayloadAction<CategoryType[]>) => {
       state.categories = action.payload;
     },
-     setCategoryAction: (state, action: PayloadAction<CategoryType>) => {
+    setCategoryAction: (state, action: PayloadAction<CategoryType>) => {
       state.category = action.payload;
     },
   },
