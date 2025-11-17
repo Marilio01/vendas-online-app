@@ -20,6 +20,13 @@ const App = () => {
   useEffect(() => {
     const requestNotificationPermission = async () => {
       try {
+        const currentSettings = await notifee.getNotificationSettings();
+
+        if (currentSettings.authorizationStatus >= AuthorizationStatus.AUTHORIZED) {
+          await AsyncStorage.removeItem('notificationDeniedCount');
+          return;
+        }
+
         const deniedCount = await AsyncStorage.getItem('notificationDeniedCount');
         const currentCount = deniedCount ? parseInt(deniedCount) : 0;
 

@@ -1,13 +1,14 @@
+import notifee, { AndroidImportance, AuthorizationStatus } from '@notifee/react-native';
 
-import notifee, { AndroidImportance } from '@notifee/react-native';
-
-/**
-   @param title 
-   @param body 
- */
 export async function displayLocalNotification(title: string, body: string) {
   try {
-    await notifee.requestPermission();
+
+    const settings = await notifee.getNotificationSettings();
+
+    if (settings.authorizationStatus < AuthorizationStatus.AUTHORIZED) {
+      console.log('Notificação não enviada: permissão não autorizada.');
+      return;
+    }
 
     const channelId = await notifee.createChannel({
       id: 'default', 
@@ -15,7 +16,6 @@ export async function displayLocalNotification(title: string, body: string) {
       importance: AndroidImportance.HIGH, 
     });
 
-  
     await notifee.displayNotification({
       title: title,
       body: body,
