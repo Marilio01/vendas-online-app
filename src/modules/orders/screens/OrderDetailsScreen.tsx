@@ -25,7 +25,8 @@ const getPaymentMethod = (payment?: PaymentType): string => {
     case 'PaymentPixEntity':
       return 'PIX';
     case 'PaymentCreditCardEntity':
-      return `Cartão de Crédito (${payment.amountPayments || 1}x)`;
+      const installments = payment.amountPayments || 1;
+      return `Cartão de Crédito (${installments}x)`;
     default:
       return payment.type;
   }
@@ -33,7 +34,7 @@ const getPaymentMethod = (payment?: PaymentType): string => {
 
 const OrderDetailsScreen = () => {
   const route = useRoute();
-  const { orderId } = route.params as { orderId: number };
+  const { orderId, displayId } = route.params as { orderId: number; displayId: number };
 
   const { orderDetails, loading, fetchOrderDetails } = useOrderDetails();
 
@@ -46,7 +47,7 @@ const OrderDetailsScreen = () => {
   if (loading) {
     return (
       <S.LoadingContainer>
-        <ActivityIndicator size="large" color={theme.colors.mainTheme.primary} />
+        <ActivityIndicator size="large" color={theme.colors.primary.main} />
       </S.LoadingContainer>
     );
   }
@@ -60,6 +61,8 @@ const OrderDetailsScreen = () => {
   }
 
   const total = orderDetails.payment?.finalPrice || 0;
+  const installments = orderDetails.payment?.amountPayments || 1;
+  const installmentValue = total / installments;
 
   return (
     <S.Container>
@@ -67,7 +70,7 @@ const OrderDetailsScreen = () => {
         <S.CardTitle>Resumo do Pedido</S.CardTitle>
         <S.InfoRow>
           <S.InfoLabel>Pedido Nº:</S.InfoLabel>
-          <S.InfoValue>#{orderDetails.id}</S.InfoValue>
+          <S.InfoValue>#{displayId || orderDetails.id}</S.InfoValue>
         </S.InfoRow>
         <S.InfoRow>
           <S.InfoLabel>Data:</S.InfoLabel>
@@ -81,16 +84,24 @@ const OrderDetailsScreen = () => {
           <S.InfoLabel>Pagamento:</S.InfoLabel>
           <S.InfoValue>{getPaymentMethod(orderDetails.payment)}</S.InfoValue>
         </S.InfoRow>
+        {orderDetails.payment?.type === 'PaymentCreditCardEntity' && (
+          <S.InfoRow>
+            <S.InfoLabel>Valor da Parcela:</S.InfoLabel>
+            <S.InfoValue>{convertNumberToMoney(installmentValue)}</S.InfoValue>
+          </S.InfoRow>
+        )}
       </S.Card>
 
       <S.Card>
         <S.CardTitle>Produtos</S.CardTitle>
         {orderDetails.ordersProduct?.map((item) => (
           <S.ProductItem key={item.id}>
+            <S.ProductImage source={{ uri: item.product?.image }} />
             <S.ProductInfo>
               <S.ProductName>{item.product?.name || 'Produto'}</S.ProductName>
-              <S.ProductAmount>
-                {item.amount}x {convertNumberToMoney(item.price)}
+              <S.ProductAmount>Qtd: {item.amount}</S.ProductAmount>
+              <S.ProductAmount style={{ fontSize: 14, color: theme.colors.text.secondary }}>
+                {convertNumberToMoney(item.price)}/un.
               </S.ProductAmount>
             </S.ProductInfo>
             <S.ProductPrice>{convertNumberToMoney(item.amount * item.price)}</S.ProductPrice>
@@ -104,9 +115,23 @@ const OrderDetailsScreen = () => {
       </S.Card>
 
       <S.Card>
+        <S.CardTitle>Dados do Cliente</S.CardTitle>
+        <S.InfoRow>
+          <S.InfoLabel>Nome:</S.InfoLabel>
+          <S.InfoValue>{orderDetails.user?.name}</S.InfoValue>
+        </S.InfoRow>
+        <S.InfoRow>
+          <S.InfoLabel>Email:</S.InfoLabel>
+          <S.InfoValue>{orderDetails.user?.email}</S.InfoValue>
+        </S.InfoRow>
+      </S.Card>
+
+      <S.Card>
         <S.CardTitle>Endereço de Entrega</S.CardTitle>
         <S.InfoRow>
-          <S.InfoValue style={{ textAlign: 'left' }}>{orderDetails.address?.street}</S.InfoValue>
+          <S.InfoValue style={{ textAlign: 'left' }}>
+            {`${orderDetails.address?.street}, ${orderDetails.address?.numberAddress}`}
+          </S.InfoValue>
         </S.InfoRow>
 
         {!!orderDetails.address?.complement && (
@@ -119,7 +144,7 @@ const OrderDetailsScreen = () => {
 
         <S.InfoRow>
           <S.InfoValue style={{ textAlign: 'left' }}>
-            {orderDetails.address?.city?.name} - {orderDetails.address?.city?.state?.uf}
+            {`${orderDetails.address?.city?.name} - ${orderDetails.address?.city?.state?.uf}`}
           </S.InfoValue>
         </S.InfoRow>
         <S.InfoRow>

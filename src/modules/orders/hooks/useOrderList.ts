@@ -1,30 +1,27 @@
-import { useState, useCallback, useEffect } from 'react'; // Importe o useEffect
+import { useCallback } from 'react';
 import { useRequests } from '../../../shared/hooks/useRequests';
 import { OrderType } from '../../../shared/types/OrderType';
 import { URL_ORDER } from '../../../shared/constants/urls';
 import { MethodEnum } from '../../../enums/methods.enum';
+import { useOrderReducer } from '../../../store/reducers/orderReducer/useOrderReducer';
 
 export const useOrderList = () => {
   const { request, loading } = useRequests();
-  const [orders, setOrders] = useState<OrderType[]>([]);
+  const { orders, setOrders } = useOrderReducer();
 
   const fetchUserOrders = useCallback(async () => {
-    if (loading || orders.length > 0) {
-    }
-
     const result = await request<OrderType[]>({
       url: URL_ORDER,
       method: MethodEnum.GET,
+      saveGlobal: setOrders,
+      showErrorToast: false,
     });
 
-    if (result) {
-      setOrders(result);
+    if (!result) {
+      setOrders([]);
     }
-  }, [request, loading, orders.length]);
+  }, [request, setOrders]);
 
-  useEffect(() => {
-    fetchUserOrders();
-  }, [fetchUserOrders]);
   return {
     orders,
     listLoading: loading,
