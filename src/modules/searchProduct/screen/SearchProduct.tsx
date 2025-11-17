@@ -2,88 +2,125 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
 import {
-    NativeScrollEvent,
-    NativeSyntheticEvent,
-    ScrollView,
-    TextInputChangeEventData,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  ScrollView,
+  TextInputChangeEventData,
+  ActivityIndicator,
 } from 'react-native';
 import { MethodEnum } from '../../../enums/methods.enum';
-import Input from '../../../shared/components/input/Input';
-import { ActivityIndicatorButton } from '../../../shared/components/button/button.style';
 import { theme } from '../../../shared/themes/theme';
 import { URL_PRODUCT_PAGE } from '../../../shared/constants/urls';
 import { useRequests } from '../../../shared/hooks/useRequests';
 import { PaginationType } from '../../../shared/types/paginationType';
 import { ProductType } from '../../../shared/types/productType';
 import { useProductReducer } from '../../../store/reducers/productReducer/useProductReducer';
-import ProductThumbnail from '../../../shared/components/productThumbnail.tsx/ProductThumbnail';
-import { SearchProductContainer, SearchProductScrollView } from '../styles/searchProduct.style';
+import ProductThumbnail from '../../../shared/components/productThumbnail/ProductThumbnail';
+import {
+  SearchProductContainer,
+  SearchProductScrollView,
+  SearchContainer,
+  SearchInputWrapper,
+  SearchTextInput,
+  SearchIcon,
+} from '../styles/searchProduct.style';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export type SearchProductNavigationProp = NativeStackNavigationProp<
-    Record<string, SearchProductParams>
+  Record<string, SearchProductParams>
 >;
 
 export interface SearchProductParams {
-    search?: string;
+  search?: string;
 }
 
 const SearchProduct = () => {
-    const { searchProducts, setSearchProducts, insertSearchProducts } = useProductReducer();
-    const { params } = useRoute<RouteProp<Record<string, SearchProductParams>>>();
-    const { request, loading } = useRequests();
-    const [value, setValue] = useState(params?.search || '');
+  const { searchProducts, setSearchProducts, insertSearchProducts } = useProductReducer();
+  const { params } = useRoute<RouteProp<Record<string, SearchProductParams>>>();
+  const { request, loading } = useRequests();
+  const [value, setValue] = useState(params?.search || '');
 
-    useEffect(() => {
-        setValue(params?.search || '');
-    }, [params]);
+  useEffect(() => {
+    setSearchProducts(undefined);
+  }, []);
 
-    useEffect(() => {
-        setSearchProducts(undefined);
-        request<PaginationType<ProductType[]>>({
-            url: `${URL_PRODUCT_PAGE}?search=${value}`,
-            method: MethodEnum.GET,
-            saveGlobal: setSearchProducts,
-        });
-    }, [value]);
+  useEffect(() => {
+    let active = true;
 
-    const findNewPage = () => {
-        if (searchProducts && searchProducts.meta.currentPage < searchProducts.meta.totalPages) {
-            request<PaginationType<ProductType[]>>({
-                url: `${URL_PRODUCT_PAGE}?search=${value}&page=${searchProducts.meta.currentPage + 1}`,
-                method: MethodEnum.GET,
-                saveGlobal: insertSearchProducts,
-            });
-        }
+    const fetchProducts = async () => {
+      setSearchProducts(undefined);
+      const result = await request<PaginationType<ProductType[]>>({
+        url: `${URL_PRODUCT_PAGE}?search=${value}`,
+        method: MethodEnum.GET,
+      });
+      if (active && result) {
+        setSearchProducts(result);
+      }
     };
 
-    const handleOnChangeInput = (event: NativeSyntheticEvent<TextInputChangeEventData>) => {
-        setValue(event.nativeEvent.text);
+    if (value) {
+      fetchProducts();
+    } else {
+      setSearchProducts(undefined);
+    }
+
+    return () => {
+      active = false;
     };
+  }, [value, request]);
 
-    const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-        const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent;
-        const isEndScroll = contentOffset.y >= contentSize.height - layoutMeasurement.height;
+  const findNewPage = () => {
+    if (searchProducts && searchProducts.meta.currentPage < searchProducts.meta.totalPages) {
+      request<PaginationType<ProductType[]>>({
+        url: `${URL_PRODUCT_PAGE}?search=${value}&page=${searchProducts.meta.currentPage + 1}`,
+        method: MethodEnum.GET,
+        saveGlobal: insertSearchProducts,
+      });
+    }
+  };
 
-        if (isEndScroll && !loading) {
-            findNewPage();
-        }
-    };
+  const handleOnChangeInput = (event: NativeSyntheticEvent<TextInputChangeEventData>) => {
+    setValue(event.nativeEvent.text);
+  };
 
-    return (
-        <SearchProductContainer>
-            <Input onChange={handleOnChangeInput} value={value} iconRight="search" />
-            {searchProducts && searchProducts.data && (
-                <ScrollView onScroll={handleScroll}>
-                    <SearchProductScrollView>
-                        {searchProducts.data.map((product) => (
-                            <ProductThumbnail margin="4px 0px" product={product} />
-                        ))}
-                    </SearchProductScrollView>
-                </ScrollView>
-            )}
-            {loading && <ActivityIndicatorButton color={theme.colors.mainTheme.primary} />}
-        </SearchProductContainer>
-    );
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const { contentOffset, layoutMeasurement, contentSize } = event.nativeEvent;
+    const isEndScroll = contentOffset.y >= contentSize.height - layoutMeasurement.height;
+
+    if (isEndScroll && !loading) {
+      findNewPage();
+    }
+  };
+
+  return (
+    <SearchProductContainer>
+      <SafeAreaView style={{ backgroundColor: theme.colors.neutral.background }}>
+        <SearchContainer>
+          <SearchInputWrapper>
+            <SearchIcon name="search" />
+            <SearchTextInput
+              value={value}
+              onChangeText={setValue}
+              placeholder="Pesquisar produto"
+              autoFocus={true}
+              returnKeyType="search"
+            />
+          </SearchInputWrapper>
+        </SearchContainer>
+      </SafeAreaView>
+
+      {searchProducts && searchProducts.data && (
+        <ScrollView onScroll={handleScroll}>
+          <SearchProductScrollView>
+            {searchProducts.data.map((product) => (
+              <ProductThumbnail key={product.id} product={product} />
+            ))}
+          </SearchProductScrollView>
+        </ScrollView>
+      )}
+      {loading && <ActivityIndicator color={theme.colors.primary.main} />}
+    </SearchProductContainer>
+  );
 };
 
 export default SearchProduct;
