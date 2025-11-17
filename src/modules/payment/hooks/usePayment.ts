@@ -5,34 +5,44 @@ import { displayLocalNotification } from '../../../shared/services/notifications
 import { useOrder } from '../../orders/hooks/useOrder';
 import { CreateOrderDTO } from '../../../shared/types/createOrderDTO';
 import { MenuUrl } from '../../../shared/enums/MenuUrl.enum';
+import { useCartReducer } from '../../../store/reducers/cartReducer/useCartReducer';
 
 export type PaymentType = 'credit_card' | 'pix';
+
+const MOCK_PIX_CODE = '00020126580014BR.GOV.BCB.PIX0136...';
 
 export const usePayment = () => {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const route = useRoute();
-  const { addressId, totalValue } = route.params as { addressId: number; totalValue: number };
-  const { createOrder, orderLoading } = useOrder();
 
-  const [selectedPaymentType, setSelectedPaymentType] = useState<PaymentType | undefined>();
+  const { addressId, totalValue, paymentMethod } = route.params as {
+    addressId: number;
+    totalValue: number;
+    paymentMethod: PaymentType;
+  };
+
+  const { createOrder, orderLoading } = useOrder();
+  const { clearCart } = useCartReducer();
+
   const [amountPayments, setAmountPayments] = useState<number>(1);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleConfirmOrder = async () => {
-    if (!selectedPaymentType) return;
+    if (!paymentMethod) return;
 
     const orderDTO: CreateOrderDTO = { addressId };
 
-    if (selectedPaymentType === 'credit_card') {
+    if (paymentMethod === 'credit_card') {
       orderDTO.amountPayments = amountPayments > 0 ? amountPayments : 1;
-    } else if (selectedPaymentType === 'pix') {
-      orderDTO.codePix = 'PIX-MOCK-CODE-FROM-APP';
+    } else if (paymentMethod === 'pix') {
+      orderDTO.codePix = MOCK_PIX_CODE;
       orderDTO.datePayment = new Date().toISOString();
     }
 
     const success = await createOrder(orderDTO);
 
     if (success) {
+      clearCart();
       setShowSuccessModal(true);
       displayLocalNotification(
         'Pedido Confirmado! ✅',
@@ -54,8 +64,7 @@ export const usePayment = () => {
   };
 
   return {
-    selectedPaymentType,
-    setSelectedPaymentType,
+    selectedPaymentType: paymentMethod,
     amountPayments,
     setAmountPayments,
     handleConfirmOrder,
@@ -64,5 +73,6 @@ export const usePayment = () => {
     showSuccessModal,
     handleContinueShopping,
     handleViewOrders,
+    codePix: MOCK_PIX_CODE,
   };
 };

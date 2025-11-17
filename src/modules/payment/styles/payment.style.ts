@@ -1,158 +1,165 @@
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
+import { View, Text, TouchableOpacity, Pressable } from 'react-native';
 import { theme } from '../../../shared/themes/theme';
-import Text from '../../../shared/components/text/Text';
+import { DefaultTheme } from 'styled-components';
 
-interface PaymentOptionProps {
-  isSelected: boolean;
-}
-interface PaymentTextProps {
-  isSelected: boolean;
-}
-interface CardProps {}
-interface InstallmentProps {
-  isSelected: boolean;
-}
-
-export const Container = styled.View`
-  flex: 1;
-  background-color: #f9fafb;
-`;
-
-export const Title = styled(Text)`
-  font-size: 22px;
-  font-weight: bold;
-  text-align: center;
-  margin: 20px 0;
-  color: #222;
-`;
-
-export const Card = styled.View<CardProps>`
-  background-color: ${theme.colors.neutralTheme.white};
-  border-radius: 12px;
+const CardStyles = css`
+  background-color: ${theme.colors.neutral.surface};
+  border-radius: 8px;
   padding: 16px;
   margin: 0 16px 16px;
+  elevation: 2;
   shadow-color: #000;
+  shadow-offset: 0px 1px;
   shadow-opacity: 0.1;
-  shadow-radius: 5px;
-  elevation: 3;
+  shadow-radius: 2px;
+`;
+
+export const Container = styled(View)`
+  flex: 1;
+  background-color: ${theme.colors.neutral.background};
+`;
+
+export const Title = styled.Text`
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: ${theme.colors.text.primary};
+`;
+
+export const Card = styled(View)`
+  ${CardStyles}
 `;
 
 export const CardTitle = styled(Text)`
   font-size: 18px;
-  font-weight: 600;
+  font-weight: bold;
   margin-bottom: 16px;
-  color: #333;
+  color: ${theme.colors.text.primary};
 `;
 
-export const PaymentOption = styled.TouchableOpacity<PaymentOptionProps>`
+export const PaymentOption = styled(TouchableOpacity)<{ isSelected: boolean }>`
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  padding: 16px;
   border-width: 1px;
-  border-color: ${(props: PaymentOptionProps) => (props.isSelected ? '#6C63FF' : '#ddd')};
-  background-color: ${(props: PaymentOptionProps) => (props.isSelected ? '#F0ECFF' : '#fff')};
-  border-radius: 10px;
-  padding: 14px;
-  margin-bottom: 10px;
-`;
-
-export const PaymentLeft = styled.View`
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-`;
-
-export const PaymentText = styled(Text)<PaymentTextProps>`
-  font-size: 16px;
-  color: ${(props: PaymentTextProps) => (props.isSelected ? '#6C63FF' : '#555')};
-  font-weight: ${(props: PaymentTextProps) => (props.isSelected ? 'bold' : 'normal')};
-`;
-
-export const DropdownContainer = styled.View`
-  position: relative;
-  width: 100%;
-`;
-
-export const DropdownTrigger = styled.TouchableOpacity`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px;
   border-radius: 8px;
+  margin-bottom: 8px;
+  border-color: ${({ isSelected, theme }: { isSelected: boolean; theme: DefaultTheme }) =>
+    isSelected ? theme.colors.primary.main : theme.colors.neutral.border};
+  background-color: ${({ isSelected, theme }: { isSelected: boolean; theme: DefaultTheme }) =>
+    isSelected ? theme.colors.primary.light : theme.colors.neutral.surface};
+`;
+
+export const PaymentLeft = styled(View)`
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const PaymentText = styled(Text)<{ isSelected: boolean }>`
+  font-size: 16px;
+  margin-left: 12px;
+  font-weight: ${({ isSelected }: { isSelected: boolean }) => (isSelected ? '600' : '400')};
+  color: ${({ isSelected, theme }: { isSelected: boolean; theme: DefaultTheme }) =>
+    isSelected ? theme.colors.primary.main : theme.colors.text.primary};
+`;
+
+export const DropdownContainer = styled(View)``;
+
+export const DropdownTrigger = styled(TouchableOpacity)`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
   border-width: 1px;
-  border-color: #ddd;
-  background-color: #fff;
+  border-radius: 8px;
+  border-color: ${theme.colors.neutral.border};
 `;
 
 export const DropdownTriggerText = styled(Text)`
   font-size: 16px;
-  color: #555;
+  color: ${theme.colors.text.primary};
 `;
 
-export const InstallmentItem = styled.TouchableOpacity<InstallmentProps>`
-  padding: 14px;
-  background-color: ${(props: InstallmentProps) => (props.isSelected ? '#F0ECFF' : '#fff')};
-  border-bottom-width: 1px;
-  border-color: #eee;
-`;
-
-export const InstallmentText = styled(Text)<InstallmentProps>`
-  font-size: 16px;
-  color: ${(props: InstallmentProps) => (props.isSelected ? '#6C63FF' : '#555')};
-  font-weight: ${(props: InstallmentProps) => (props.isSelected ? 'bold' : 'normal')};
-`;
-
-export const SummaryTotal = styled.View`
+export const SummaryTotal = styled(View)`
   flex-direction: row;
   justify-content: space-between;
-  margin-top: 10px;
 `;
 
 export const SummaryLabel = styled(Text)`
   font-size: 18px;
+  color: ${theme.colors.text.secondary};
 `;
 
 export const SummaryValue = styled(Text)`
   font-size: 18px;
   font-weight: bold;
-  color: #6c63ff;
+  color: ${theme.colors.text.primary};
 `;
 
-export const Footer = styled.View`
+export const Footer = styled(View)`
   padding: 16px;
-  background-color: ${theme.colors.neutralTheme.white};
+  background-color: ${theme.colors.neutral.surface};
   border-top-width: 1px;
-  border-color: #eee;
+  border-top-color: ${theme.colors.neutral.border};
+  elevation: 10;
 `;
 
-export const ModalOverlay = styled.Pressable`
+export const ModalOverlay = styled(TouchableOpacity)`
   flex: 1;
   background-color: rgba(0, 0, 0, 0.5);
   justify-content: center;
   align-items: center;
+  padding: 20px;
 `;
 
-export const ModalContent = styled.View`
-  width: 80%;
-  max-height: 85%;
-  background-color: ${theme.colors.neutralTheme.white};
-  border-radius: 8px;
-  padding: 24px;
-  align-items: center;
-  shadow-color: #000;
-  shadow-opacity: 0.25;
-  shadow-radius: 4px;
-  elevation: 5;
+export const ModalContent = styled(Pressable)`
+  ${CardStyles}
+  width: 100%;
+  max-height: 80%;
+  margin: 0;
 `;
 
 export const ModalTitle = styled(Text)`
   font-size: 20px;
   font-weight: bold;
-  color: #333;
-  text-align: center;
+  color: ${theme.colors.text.primary};
   margin-bottom: 16px;
+  text-align: center;
 `;
 
-export const ModalButtonWrapper = styled.View`
+export const InstallmentItem = styled(TouchableOpacity)<{ isSelected: boolean }>`
+  padding: 16px;
+  border-bottom-width: 1px;
+  border-bottom-color: ${theme.colors.neutral.border};
+  background-color: ${({ isSelected, theme }: { isSelected: boolean; theme: DefaultTheme }) =>
+    isSelected ? theme.colors.primary.light : 'transparent'};
+`;
+
+export const InstallmentText = styled(Text)<{ isSelected: boolean }>`
+  font-size: 16px;
+  font-weight: ${({ isSelected }: { isSelected: boolean }) => (isSelected ? '600' : '400')};
+  color: ${({ isSelected, theme }: { isSelected: boolean; theme: DefaultTheme }) =>
+    isSelected ? theme.colors.primary.main : theme.colors.text.primary};
+`;
+
+export const ModalButtonWrapper = styled(View)`
   width: 100%;
+  margin-top: 16px;
+`;
+
+export const QRCodeContainer = styled(View)`
+  align-items: center;
+  padding: 16px 0;
+  border-top-width: 1px;
+  border-top-color: ${theme.colors.neutral.border};
+  margin-top: 16px;
+`;
+
+export const QRCodeLabel = styled(Text)`
+  font-size: 16px;
+  color: ${theme.colors.text.secondary};
+  text-align: center;
+  margin-top: 8px;
 `;

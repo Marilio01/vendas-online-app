@@ -5,11 +5,12 @@ import Button from '../../../shared/components/button/Button';
 import { convertNumberToMoney } from '../../../shared/functions/money';
 import { usePayment } from '../hooks/usePayment';
 import * as S from '../styles/payment.style';
+import { theme } from '../../../shared/themes/theme';
+import QRCode from 'react-native-qrcode-svg';
 
 const PaymentScreen = () => {
   const {
     selectedPaymentType,
-    setSelectedPaymentType,
     amountPayments,
     setAmountPayments,
     handleConfirmOrder,
@@ -18,14 +19,10 @@ const PaymentScreen = () => {
     showSuccessModal,
     handleContinueShopping,
     handleViewOrders,
+    codePix,
   } = usePayment();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const paymentOptions = [
-    { id: 'credit_card', title: 'Cartão de Crédito', icon: 'credit-card' },
-    { id: 'pix', title: 'PIX', icon: 'hexagon' },
-  ];
 
   const installmentOptions = Array.from({ length: 12 }, (_, i) => i + 1).map((num) => ({
     id: num,
@@ -52,47 +49,49 @@ const PaymentScreen = () => {
     );
   };
 
+  const renderPaymentDetails = () => {
+    if (selectedPaymentType === 'pix') {
+      return (
+        <S.Card>
+          <S.CardTitle>Pague com PIX</S.CardTitle>
+          <S.QRCodeContainer>
+            <QRCode
+              value={codePix}
+              size={200}
+              backgroundColor={theme.colors.neutral.surface}
+              color={theme.colors.text.primary}
+            />
+            <S.QRCodeLabel>Escaneie o QR Code para pagar</S.QRCodeLabel>
+          </S.QRCodeContainer>
+        </S.Card>
+      );
+    }
+
+    if (selectedPaymentType === 'credit_card') {
+      return (
+        <S.Card>
+          <S.CardTitle>Escolha o número de parcelas</S.CardTitle>
+          <S.DropdownContainer>
+            <S.DropdownTrigger onPress={() => setIsModalVisible(true)} activeOpacity={0.8}>
+              <S.DropdownTriggerText>{selectedInstallmentLabel}</S.DropdownTriggerText>
+              <Feather name="chevron-down" size={20} color={theme.colors.text.secondary} />
+            </S.DropdownTrigger>
+          </S.DropdownContainer>
+        </S.Card>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <S.Container>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }}
+        contentContainerStyle={{ paddingBottom: 120, paddingTop: 16 }}
         keyboardShouldPersistTaps="handled"
       >
-        <S.Title>Forma de Pagamento</S.Title>
-
-        <S.Card>
-          <S.CardTitle>Escolha sua forma de pagamento</S.CardTitle>
-          {paymentOptions.map((item) => {
-            const isSelected = selectedPaymentType === item.id;
-            return (
-              <S.PaymentOption
-                key={item.id}
-                isSelected={isSelected}
-                onPress={() => setSelectedPaymentType(item.id as any)}
-                activeOpacity={0.8}
-              >
-                <S.PaymentLeft>
-                  <Feather name={item.icon} size={24} color={isSelected ? '#6C63FF' : '#555'} />
-                  <S.PaymentText isSelected={isSelected}>{item.title}</S.PaymentText>
-                </S.PaymentLeft>
-                {isSelected && <Feather name="check-circle" size={20} color="#6C63FF" />}
-              </S.PaymentOption>
-            );
-          })}
-        </S.Card>
-
-        {selectedPaymentType === 'credit_card' && (
-          <S.Card>
-            <S.CardTitle>Escolha o número de parcelas</S.CardTitle>
-            <S.DropdownContainer>
-              <S.DropdownTrigger onPress={() => setIsModalVisible(true)} activeOpacity={0.8}>
-                <S.DropdownTriggerText>{selectedInstallmentLabel}</S.DropdownTriggerText>
-                <Feather name="chevron-down" size={20} color="#555" />
-              </S.DropdownTrigger>
-            </S.DropdownContainer>
-          </S.Card>
-        )}
+        {renderPaymentDetails()}
 
         <S.Card>
           <S.CardTitle>Resumo do Pedido</S.CardTitle>
@@ -107,11 +106,11 @@ const PaymentScreen = () => {
 
       <S.Footer>
         <Button
-          title="Confirmar Pedido"
+          title={selectedPaymentType === 'pix' ? 'Pagamento Realizado' : 'Confirmar Pagamento'}
           onPress={handleConfirmOrder}
           disabled={!selectedPaymentType || orderLoading}
           loading={orderLoading}
-          variant="warning"
+          variant="primary"
           borderRadius="8px"
         />
       </S.Footer>
@@ -157,7 +156,7 @@ const PaymentScreen = () => {
               <Button
                 title="Ver pedidos"
                 onPress={handleViewOrders}
-                variant="warning"
+                variant="primary"
                 borderRadius="8px"
               />
             </S.ModalButtonWrapper>
