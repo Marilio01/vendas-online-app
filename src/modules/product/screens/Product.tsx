@@ -1,7 +1,6 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState, useMemo } from 'react';
-import { View } from 'react-native';
 import { ProductType } from '../../../shared/types/productType';
 import * as S from '../styles/product.style';
 import { useCart } from '../../cart/hooks/useCart';
@@ -9,6 +8,7 @@ import Button from '../../../shared/components/button/Button';
 import { theme } from '../../../shared/themes/theme';
 import Icon from 'react-native-vector-icons/Feather';
 import { convertNumberToMoney } from '../../../shared/functions/money';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export type ProductNavigationProp = NativeStackNavigationProp<Record<string, ProductParams>>;
@@ -30,7 +30,9 @@ const Product = () => {
   const { insertProductInCart, loading } = useCart();
   const [quantity, setQuantity] = useState(1);
 
+  const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
+
   const FOOTER_CLEARANCE = 80;
 
   const handleAddToCart = () => {
@@ -40,6 +42,7 @@ const Product = () => {
   const handleDecrease = () => {
     setQuantity((q) => (q > 1 ? q - 1 : 1));
   };
+
   const handleIncrease = () => {
     setQuantity((q) => q + 1);
   };
@@ -48,6 +51,7 @@ const Product = () => {
     <S.Container>
       <S.ScrollViewContainer
         contentContainerStyle={{ paddingBottom: FOOTER_CLEARANCE + insets.bottom }}
+        scrollIndicatorInsets={{ top: headerHeight }}
       >
         <S.ImageWrapper>
           <S.ProductImage source={{ uri: product.image }} resizeMode="contain" />
@@ -90,25 +94,20 @@ const Product = () => {
           </S.PriceRow>
 
           <S.ProductDescription>
-            Descrição completa do produto: Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-            veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore
-            eu fugiat nulla pariatur.
+            {product.description || 'Este produto ainda não possui uma descrição.'}
           </S.ProductDescription>
         </S.InfoContainer>
       </S.ScrollViewContainer>
 
       <S.Footer>
-        <View style={{ flex: 1 }}>
-          <Button
-            title="Adicionar"
-            variant="primary"
-            onPress={handleAddToCart}
-            loading={loading}
-            disabled={loading}
-          />
-        </View>
+        <Button
+          title="Adicionar"
+          variant="primary"
+          onPress={handleAddToCart}
+          loading={loading}
+          disabled={loading}
+          style={{ flex: 1 }}
+        />
       </S.Footer>
     </S.Container>
   );

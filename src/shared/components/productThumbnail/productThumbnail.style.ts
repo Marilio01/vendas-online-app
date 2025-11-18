@@ -26,19 +26,15 @@ export const ProductClickableArea = styled.TouchableOpacity`
 export const ImageWrapper = styled.View`
   width: 100%;
   height: 120px;
-  background-color: ${theme.colors.neutral.surface};
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
+  background-color: transparent;
   overflow: hidden;
-  
-  position: relative; 
 `;
 
 export const ProductImage = styled.Image`
   width: 100%;
   height: 100%;
   resize-mode: contain;
-  background-color: ${theme.colors.neutral.surface};
+  background-color: transparent;
 `;
 
 export const ProductInfoWrapper = styled.View`
@@ -46,12 +42,14 @@ export const ProductInfoWrapper = styled.View`
 `;
 
 export const ProductName = styled.Text.attrs({
-  numberOfLines: 2,
+  numberOfLines: 1,
+  ellipsizeMode: 'tail',
 })`
   font-size: 15px;
   font-weight: 600;
   color: ${theme.colors.text.secondary};
   margin-bottom: 4px;
+  width: 100%;
 `;
 
 export const FloatingDiscountBadge = styled.View`
@@ -74,7 +72,7 @@ export const PriceContainer = styled.View`
   flex-direction: row;
   align-items: flex-end;
   margin-bottom: 8px;
-  flex-wrap: wrap; 
+  flex-wrap: wrap;
 `;
 
 export const ProductPrice = styled.Text`
@@ -96,7 +94,7 @@ export const DiscountBadge = styled.View`
   padding: 2px 6px;
   border-radius: 4px;
   margin-left: 8px;
-  flex-shrink: 0; 
+  flex-shrink: 0;
 `;
 
 export const DiscountText = styled.Text`
