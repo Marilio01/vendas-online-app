@@ -43,6 +43,7 @@ export const useAddress = () => {
       const result = await request<{ success: boolean }>({
         url: `${URL_ADDRESS}/${addressId}`,
         method: MethodEnum.DELETE,
+        message: 'Endereço removido com sucesso!',
       });
 
       if (result) {

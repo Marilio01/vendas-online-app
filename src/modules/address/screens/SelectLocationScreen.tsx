@@ -21,7 +21,7 @@ export default function SelectLocationScreen() {
 
   useEffect(() => {
     Geolocation.getCurrentPosition(
-      pos => {
+      (pos) => {
         setCoords({
           latitude: pos.coords.latitude,
           longitude: pos.coords.longitude,
@@ -30,7 +30,7 @@ export default function SelectLocationScreen() {
       () => {
         setCoords({ latitude: -8.409, longitude: -35.567 }); // fallback
       },
-      { enableHighAccuracy: true, timeout: 12000, maximumAge: 5000 }
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 5000 },
     );
   }, []);
 
@@ -67,7 +67,7 @@ export default function SelectLocationScreen() {
     await createAddress(address);
 
     if (!addressErrorMessage) {
-      (navigation as any).navigate('AddressList');  
+      (navigation as any).replace('AddressList');
     }
   };
 

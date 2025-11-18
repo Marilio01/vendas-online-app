@@ -33,7 +33,7 @@ export const AddressListScreen = () => {
     if (found) {
       setSelectedAddress(found);
       setSelectedId(addressId);
-      navigation.goBack();
+      navigation.navigate('Checkout');
     }
   };
 
