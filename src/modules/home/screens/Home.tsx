@@ -1,6 +1,5 @@
 import React from 'react';
 import { FlatList, ActivityIndicator } from 'react-native';
-import ProductThumbnail from '../../../shared/components/productThumbnail/ProductThumbnail';
 import { theme } from '../../../shared/themes/theme';
 import { useHome } from '../hooks/useHome';
 import {
@@ -13,8 +12,12 @@ import {
   CategoryTitle,
   ProductItemWrapper,
   LoadingContainer,
+  EmptyContainer,
+  EmptyText,
 } from '../styles/home.style';
 import { ProductType } from '../../../shared/types/ProductType';
+import Icon from 'react-native-vector-icons/Feather';
+import ProductThumbnail from '../../../shared/components/productThumbnail/ProductThumbnail';
 
 const Home = () => {
   const { loading, groupedProducts, handleGoToSearchProduct } = useHome();
@@ -39,6 +42,13 @@ const Home = () => {
     </CategoryBlock>
   );
 
+  const renderEmptyList = () => (
+    <EmptyContainer>
+      <Icon name="frown" size={48} color={theme.colors.neutral.disabled} />
+      <EmptyText>Nenhum produto encontrado</EmptyText>
+    </EmptyContainer>
+  );
+
   return (
     <Container edges={['top', 'left', 'right']}>
       <SearchContainer>
@@ -58,7 +68,8 @@ const Home = () => {
           keyExtractor={(item) => item.title}
           renderItem={renderCategoryBlock}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 100, paddingTop: 16 }}
+          contentContainerStyle={{ paddingBottom: 100, paddingTop: 16, flexGrow: 1 }}
+          ListEmptyComponent={renderEmptyList}
         />
       )}
     </Container>

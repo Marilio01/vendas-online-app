@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react';
 import {
   NativeScrollEvent,
   NativeSyntheticEvent,
-  ScrollView,
-  TextInputChangeEventData,
   ActivityIndicator,
+  FlatList,
+  Keyboard,
+  TextInputChangeEventData,
 } from 'react-native';
 import { MethodEnum } from '../../../enums/methods.enum';
 import { theme } from '../../../shared/themes/theme';
@@ -15,16 +16,18 @@ import { useRequests } from '../../../shared/hooks/useRequests';
 import { PaginationType } from '../../../shared/types/paginationType';
 import { ProductType } from '../../../shared/types/productType';
 import { useProductReducer } from '../../../store/reducers/productReducer/useProductReducer';
-import ProductThumbnail from '../../../shared/components/productThumbnail/ProductThumbnail';
 import {
   SearchProductContainer,
-  SearchProductScrollView,
   SearchContainer,
   SearchInputWrapper,
   SearchTextInput,
   SearchIcon,
+  EmptyContainer,
+  EmptyText,
 } from '../styles/searchProduct.style';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/Feather';
+import ProductThumbnail from '../../../shared/components/productThumbnail/ProductThumbnail';
 
 export type SearchProductNavigationProp = NativeStackNavigationProp<
   Record<string, SearchProductParams>
@@ -39,19 +42,36 @@ const SearchProduct = () => {
   const { params } = useRoute<RouteProp<Record<string, SearchProductParams>>>();
   const { request, loading } = useRequests();
   const [value, setValue] = useState(params?.search || '');
+  
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
   useEffect(() => {
     setSearchProducts(undefined);
   }, []);
 
   useEffect(() => {
-    let active = true;
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardVisible(true);
+    });
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardVisible(false);
+    });
 
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
     const fetchProducts = async () => {
+      
       setSearchProducts(undefined);
       const result = await request<PaginationType<ProductType[]>>({
         url: `${URL_PRODUCT_PAGE}?search=${value}`,
         method: MethodEnum.GET,
+        showErrorToast: false,
       });
       if (active && result) {
         setSearchProducts(result);
@@ -75,6 +95,7 @@ const SearchProduct = () => {
         url: `${URL_PRODUCT_PAGE}?search=${value}&page=${searchProducts.meta.currentPage + 1}`,
         method: MethodEnum.GET,
         saveGlobal: insertSearchProducts,
+        showErrorToast: false,
       });
     }
   };
@@ -91,6 +112,17 @@ const SearchProduct = () => {
       findNewPage();
     }
   };
+
+  const renderProductItem = ({ item }: { item: ProductType }) => (
+    <ProductThumbnail product={item} />
+  );
+
+  const renderEmptyList = () => (
+    <EmptyContainer keyboardOpen={isKeyboardVisible}>
+      <Icon name="search" size={48} color={theme.colors.neutral.disabled} />
+      <EmptyText>Nenhum produto encontrado para "{value}"</EmptyText>
+    </EmptyContainer>
+  );
 
   return (
     <SearchProductContainer>
@@ -109,16 +141,20 @@ const SearchProduct = () => {
         </SearchContainer>
       </SafeAreaView>
 
-      {searchProducts && searchProducts.data && (
-        <ScrollView onScroll={handleScroll}>
-          <SearchProductScrollView>
-            {searchProducts.data.map((product) => (
-              <ProductThumbnail key={product.id} product={product} />
-            ))}
-          </SearchProductScrollView>
-        </ScrollView>
+      {loading && !searchProducts ? (
+        <ActivityIndicator color={theme.colors.primary.main} style={{ marginTop: 32 }} />
+      ) : (
+        <FlatList
+          data={searchProducts?.data || []}
+          renderItem={renderProductItem}
+          keyExtractor={(item) => item.id.toString()}
+          numColumns={2}
+          onScroll={handleScroll}
+          columnWrapperStyle={{ justifyContent: 'space-between', paddingHorizontal: 16 }}
+          contentContainerStyle={{ paddingTop: 16, flexGrow: 1 }}
+          ListEmptyComponent={value ? renderEmptyList : null}
+        />
       )}
-      {loading && <ActivityIndicator color={theme.colors.primary.main} />}
     </SearchProductContainer>
   );
 };

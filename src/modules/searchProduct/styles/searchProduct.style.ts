@@ -1,6 +1,7 @@
 import styled from 'styled-components/native';
 import { theme } from '../../../shared/themes/theme';
 import Icon from 'react-native-vector-icons/Feather';
+import { View, Text } from 'react-native';
 
 export const SearchProductContainer = styled.View`
   flex: 1;
@@ -44,9 +45,30 @@ export const SearchIcon = styled(Icon).attrs({
 })``;
 
 export const SearchProductScrollView = styled.View`
+  margin-top: 16px;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
   padding-bottom: 72px;
   padding-horizontal: 16px;
+`;
+
+interface EmptyContainerProps {
+  keyboardOpen: boolean;
+}
+
+export const EmptyContainer = styled(View)<EmptyContainerProps>`
+  flex: 1;
+  align-items: center;
+  justify-content: ${({ keyboardOpen }: EmptyContainerProps) =>
+    keyboardOpen ? 'flex-start' : 'center'};
+  padding-top: ${({ keyboardOpen }: EmptyContainerProps) => (keyboardOpen ? '30px' : '0px')};
+`;
+
+export const EmptyText = styled(Text)`
+  font-size: 18px;
+  color: ${theme.colors.text.secondary};
+  margin-top: 16px;
+  font-weight: 500;
+  text-align: center;
 `;

@@ -2,6 +2,7 @@ import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { theme } from '../../../shared/themes/theme';
 import Icon from 'react-native-vector-icons/Feather';
+import { View, Text } from 'react-native';
 
 export const Container = styled(SafeAreaView)`
   flex: 1;
@@ -65,4 +66,17 @@ export const LoadingContainer = styled.View`
   align-items: center;
   justify-content: center;
   padding-top: 32px;
+`;
+
+export const EmptyContainer = styled(View)`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  margin-top: 100px;
+`;
+
+export const EmptyText = styled(Text)`
+  font-size: 18px;
+  color: ${theme.colors.text.secondary};
+  margin-top: 16px;
 `;

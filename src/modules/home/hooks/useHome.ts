@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { NativeSyntheticEvent, TextInputChangeEventData } from 'react-native';
 import { useRequests } from '../../../shared/hooks/useRequests';
 import { useProductReducer } from '../../../store/reducers/productReducer/useProductReducer';
@@ -36,8 +36,16 @@ export const useHome = () => {
   useEffect(() => {
     const fetchData = async () => {
       const [productsResult, categoriesResult] = await Promise.all([
-        request<ProductType[]>({ url: URL_PRODUCT, method: MethodEnum.GET }),
-        request<CategoryType[]>({ url: URL_CATEGORY, method: MethodEnum.GET }),
+        request<ProductType[]>({
+          url: URL_PRODUCT,
+          method: MethodEnum.GET,
+          showErrorToast: false,
+        }),
+        request<CategoryType[]>({
+          url: URL_CATEGORY,
+          method: MethodEnum.GET,
+          showErrorToast: false,
+        }),
       ]);
 
       if (productsResult) {
