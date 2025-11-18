@@ -70,6 +70,15 @@ export const useCheckout = () => {
     savePrefs();
   }, [selectedAddress, selectedPaymentMethod, isInitializing]);
 
+  useEffect(() => {
+    if (!selectedAddress) return;
+    const stillExists = addresses.some((a) => a.id === selectedAddress.id);
+    if (!stillExists) {
+      setSelectedAddress(undefined);
+      saveCheckoutPreferences(null, selectedPaymentMethod || null);
+    }
+  }, [addresses, selectedAddress, selectedPaymentMethod]);
+
   const cartItems = useMemo(() => cart?.cartProduct || [], [cart]);
 
   useEffect(() => {

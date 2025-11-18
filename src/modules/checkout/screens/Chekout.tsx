@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { View, ActivityIndicator, Modal } from 'react-native';
+import React, { useState, useLayoutEffect } from 'react';
+import { View, ActivityIndicator, Modal, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import Button from '../../../shared/components/button/Button';
 import { convertNumberToMoney } from '../../../shared/functions/money';
 import { theme } from '../../../shared/themes/theme';
@@ -7,13 +8,15 @@ import { useCheckout } from '../hooks/useCheckout';
 import * as S from '../styles/checkout.style';
 import { CartProductType } from '../../../shared/types/cartProductType';
 import Icon from 'react-native-vector-icons/Feather';
+import { MenuUrl } from '../../../shared/enums/MenuUrl.enum';
 
 const CheckoutScreen = () => {
+  const navigation = useNavigation<any>();
   const {
+    isInitializing,
     selectedAddress,
     selectedPaymentMethod,
     paymentMethodName,
-    addressLoading,
     cartItems,
     totalValue,
     handleFinalizeOrder,
@@ -25,6 +28,19 @@ const CheckoutScreen = () => {
 
   const [itemToDelete, setItemToDelete] = useState<CartProductType | null>(null);
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={() => navigation.navigate(MenuUrl.HOME, { screen: MenuUrl.CART })}
+          style={{ marginRight: 16 }}
+        >
+          <Icon name="arrow-left" size={24} color={theme.colors.text.primary} />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
+
   const handleConfirmDelete = () => {
     if (itemToDelete) {
       removeProductFromCart(itemToDelete.product.id);
@@ -32,7 +48,7 @@ const CheckoutScreen = () => {
     }
   };
 
-  if (addressLoading && !selectedAddress) {
+  if (isInitializing) {
     return (
       <S.FullScreenLoader>
         <ActivityIndicator size="large" color={theme.colors.primary.main} />
@@ -87,9 +103,7 @@ const CheckoutScreen = () => {
           <S.SectionButtonTitle>Endereço de Entrega</S.SectionButtonTitle>
           <S.SectionButtonContent>
             <S.SectionButtonTextWrapper>
-              {addressLoading ? (
-                <ActivityIndicator size="small" color={theme.colors.primary.main} />
-              ) : selectedAddress ? (
+              {selectedAddress ? (
                 <>
                   <S.SectionButtonText>
                     {`${selectedAddress.street}, ${selectedAddress.numberAddress}`}
