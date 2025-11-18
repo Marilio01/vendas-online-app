@@ -1,16 +1,15 @@
 import React, { useRef } from 'react';
-import { TextInput } from 'react-native';
+import { TextInput, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Button from '../../../shared/components/button/Button';
 import { FloatingLabelInput } from '../../../shared/components/floatingLabelInput/FloatingLabelInput';
-import { useAddress } from '../hooks/useAddress';
 import { useAddressForm } from '../hooks/useAddressForm';
 import { CreateAddressType } from '../../../shared/types/AddressType';
 import { ButtonWrapper, StyledKeyboardAwareScrollView, Title } from '../styles/createAddress.style';
 
 const CreateAddressScreen = () => {
   const navigation = useNavigation();
-  const { createAddress, addressLoading, addressErrorMessage } = useAddress();
+
   const {
     addressState,
     errors,
@@ -32,41 +31,48 @@ const CreateAddressScreen = () => {
   const numeroRef = useRef<TextInput>(null);
   const complementoRef = useRef<TextInput>(null);
 
-  const isButtonDisabled = !isFormValid || addressLoading || cepLoading;
+  const isButtonDisabled = !isFormValid || cepLoading;
 
-  const handleSaveAddress = async () => {
-    if (isButtonDisabled) return;
+  // ⛔️ NÃO SALVA MAIS AQUI — abre MAPA antes
+  const handleSaveAddress = () => {
+    if (isButtonDisabled || !cityId) return;
 
-    const newAddress: CreateAddressType = {
+    const basicAddress: CreateAddressType = {
       cep: cep.replace(/\D/g, ''),
       street: street.trim(),
-      complement: complement.trim(),
+      complement: complement?.trim() || '',
       neighborhood: neighborhood.trim(),
       numberAddress: parseInt(numberAddress.trim(), 10),
       cityId: cityId!,
     };
 
-    await createAddress(newAddress);
-    if (!addressErrorMessage) {
-      navigation.goBack();
-    }
+    Alert.alert(
+      'Confirme no mapa',
+      'Agora selecione no mapa o local aproximado do endereço.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'OK',
+          onPress: () => {
+            (navigation as any).navigate('SelectLocation', { address: basicAddress });
+
+          },
+        },
+      ],
+      { cancelable: false },
+    );
   };
 
   const getCepError = () => {
     if (apiError) return apiError;
     if (errors.cep) return errors.cep;
-    if (addressErrorMessage) return addressErrorMessage;
     return undefined;
   };
 
   const handleCepSubmit = () => {
-    if (!isNeighborhoodReadOnly) {
-      bairroRef.current?.focus();
-    } else if (!isStreetReadOnly) {
-      ruaRef.current?.focus();
-    } else {
-      numeroRef.current?.focus();
-    }
+    if (!isNeighborhoodReadOnly) bairroRef.current?.focus();
+    else if (!isStreetReadOnly) ruaRef.current?.focus();
+    else numeroRef.current?.focus();
   };
 
   return (
@@ -88,7 +94,6 @@ const CreateAddressScreen = () => {
       />
 
       <FloatingLabelInput label="Estado (UF)" value={uf} editable={false} />
-
       <FloatingLabelInput label="Cidade" value={city} editable={false} />
 
       <FloatingLabelInput
@@ -100,7 +105,6 @@ const CreateAddressScreen = () => {
         editable={!isNeighborhoodReadOnly}
         error={errors.neighborhood}
         returnKeyType="next"
-        onSubmitEditing={() => ruaRef.current?.focus()}
       />
 
       <FloatingLabelInput
@@ -112,7 +116,6 @@ const CreateAddressScreen = () => {
         editable={!isStreetReadOnly}
         error={errors.street}
         returnKeyType="next"
-        onSubmitEditing={() => numeroRef.current?.focus()}
       />
 
       <FloatingLabelInput
@@ -124,7 +127,6 @@ const CreateAddressScreen = () => {
         keyboardType="numeric"
         error={errors.numberAddress}
         returnKeyType="next"
-        onSubmitEditing={() => complementoRef.current?.focus()}
       />
 
       <FloatingLabelInput
@@ -140,7 +142,7 @@ const CreateAddressScreen = () => {
         <Button
           title="Salvar Endereço"
           onPress={handleSaveAddress}
-          loading={addressLoading}
+          loading={false}
           disabled={isButtonDisabled}
           variant="primary"
         />

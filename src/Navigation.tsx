@@ -30,11 +30,13 @@ import { AddressListScreen } from './modules/address/screens/AddressList';
 import PaymentListScreen from './modules/payment/screens/PaymentListScreen';
 import SearchProduct from './modules/searchProduct/screen/SearchProduct';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Alert, View } from 'react-native'; // Removi 'Text' que não estava sendo usado
+import { Alert, View } from 'react-native';
 import { useCart } from './modules/cart/hooks/useCart';
 import { CartBadge } from './shared/components/cartBadge/CartBadge';
 import React, { useCallback } from 'react';
 import styled from 'styled-components/native';
+import SelectLocationScreen from './modules/address/screens/SelectLocationScreen';
+
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -240,6 +242,12 @@ const Navigation = () => {
           component={CreateAddressScreen}
           options={{ title: '' }}
         />
+        <Stack.Screen
+          name="SelectLocation"
+          component={SelectLocationScreen}
+          options={{ title: 'Confirmar Localização' }}
+        />
+
         <Stack.Screen name="FirstScreen" component={FirstScreen} options={{ headerShown: false }} />
         <Stack.Screen
           name="PaymentScreen"

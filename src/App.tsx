@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider } from 'styled-components';
-import { Alert, Linking } from 'react-native';
+import { Alert, Linking, PermissionsAndroid, Platform } from 'react-native';
 import notifee, { AuthorizationStatus } from '@notifee/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Navigation from './Navigation';
@@ -14,6 +14,7 @@ import Toast from 'react-native-toast-message';
 import { toastConfig } from './shared/components/customToast/ToastConfig';
 import { CheckoutProvider } from './modules/checkout/context/CheckoutContext';
 
+import Geolocation from 'react-native-geolocation-service';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const App = () => {
@@ -28,24 +29,15 @@ const App = () => {
         }
 
         const deniedCount = await AsyncStorage.getItem('notificationDeniedCount');
-        const currentCount = deniedCount ? parseInt(deniedCount) : 0;
+        const currentCount = deniedCount ? parseInt(deniedCount, 10) : 0;
 
         if (currentCount >= 2) {
           Alert.alert(
             'Permissão de Notificação Necessária',
-            'Para receber alertas importantes sobre seus pedidos e promoções, por favor, habilite as notificações nas configurações.',
+            'Para receber alertas importantes sobre seus pedidos e promoções, habilite as notificações nas configurações.',
             [
-              {
-                text: 'Cancelar',
-                onPress: () => console.log('Cancelado'),
-                style: 'cancel',
-              },
-              {
-                text: 'Ir para Configurações',
-                onPress: () => {
-                  Linking.openSettings();
-                },
-              },
+              { text: 'Cancelar', style: 'cancel' },
+              { text: 'Ir para Configurações', onPress: () => Linking.openSettings() },
             ],
           );
           return;
@@ -54,22 +46,67 @@ const App = () => {
         const settings = await notifee.requestPermission();
 
         if (settings.authorizationStatus >= AuthorizationStatus.AUTHORIZED) {
-          console.log('Permissão de notificação concedida!');
           await AsyncStorage.removeItem('notificationDeniedCount');
-        } else if (settings.authorizationStatus === AuthorizationStatus.DENIED) {
-          console.log('Permissão de notificação negada.');
-          const newCount = currentCount + 1;
-          await AsyncStorage.setItem('notificationDeniedCount', newCount.toString());
-        } else if (settings.authorizationStatus === AuthorizationStatus.PROVISIONAL) {
-          console.log('Permissão provisória de notificação.');
-          await AsyncStorage.removeItem('notificationDeniedCount');
+        } else {
+          await AsyncStorage.setItem('notificationDeniedCount', (currentCount + 1).toString());
         }
       } catch (error) {
-        console.error('Erro ao solicitar permissão:', error);
+        console.error('Erro ao solicitar permissão de notificação:', error);
       }
     };
 
-    requestNotificationPermission();
+    const requestLocationPermission = async () => {
+      try {
+        let granted = true;
+
+        if (Platform.OS === 'android') {
+          const result = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            {
+              title: 'Permissão de Localização',
+              message:
+                'Precisamos da sua localização para facilitar a entrega e mostrar seu endereço no mapa.',
+              buttonPositive: 'OK',
+            },
+          );
+
+          granted = result === PermissionsAndroid.RESULTS.GRANTED;
+        } else {
+          const result = await Geolocation.requestAuthorization('whenInUse');
+          granted = result === 'granted';
+        }
+
+        if (!granted) {
+          const deniedCount = await AsyncStorage.getItem('locationDeniedCount');
+          const currentCount = deniedCount ? parseInt(deniedCount, 10) : 0;
+
+          if (currentCount >= 2) {
+            Alert.alert(
+              'Permissão Necessária',
+              'Para detectar sua localização automaticamente, habilite a permissão nas configurações.',
+              [
+                { text: 'Cancelar', style: 'cancel' },
+                { text: 'Ir para Configurações', onPress: () => Linking.openSettings() },
+              ],
+            );
+          } else {
+            await AsyncStorage.setItem('locationDeniedCount', (currentCount + 1).toString());
+          }
+        } else {
+          await AsyncStorage.removeItem('locationDeniedCount');
+          console.log('📍 Localização PERMITIDA!');
+        }
+      } catch (error) {
+        console.error('Erro ao solicitar permissão de localização:', error);
+      }
+    };
+
+    const init = async () => {
+      await requestNotificationPermission();
+      await requestLocationPermission();
+    };
+
+    init();
   }, []);
 
   return (
