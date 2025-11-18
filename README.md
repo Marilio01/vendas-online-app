@@ -1,88 +1,117 @@
-# 📱 Vendas Online - App
+# 📱 Vendas Online - Aplicativo Mobile
 
-Este é o aplicativo mobile da plataforma **Vendas Online**, desenvolvido em **React Native** para oferecer uma experiência fluida e responsiva em dispositivos Android.
+Aplicativo mobile oficial da plataforma **Vendas Online**, desenvolvido
+em **React Native** para proporcionar uma experiência rápida, estável e
+intuitiva em dispositivos Android.
 
-## 🚀 Principais Funcionalidades
+## 🚀 Funcionalidades Principais
 
-O sistema foi projetado para ser uma solução completa de e-commerce.
+O app oferece uma experiência completa de e-commerce, desde a descoberta
+de produtos até o checkout.
 
-### 🔐 Autenticação de Usuário
-- Cadastro e login de usuários.
+### 🔐 Autenticação
 
-### 🛍️ Gerenciamento de Produtos e Categorias
-- Exibição organizada de produtos por categoria.
+- Cadastro e login de usuários
+- Sessão persistente
+
+### 🛍️ Produtos e Categorias
+
+- Exibição por categorias
+- Detalhes completos do produto
+- Avaliações e descontos destacados
 
 ### 🛒 Carrinho de Compras
-- Adição, remoção e ajuste de quantidades de produtos.
-- Carrinho persistente, mesmo ao fechar o app.
+
+- Adição e remoção de itens
+- Alteração de quantidade
+- Carrinho salvo mesmo ao fechar o app
 
 ### 💳 Checkout e Pagamento
-- Processo de checkout com seleção de endereço.
-- Pagamentos via **PIX** ou **Cartão de Crédito**.
 
-### 📦 Gerenciamento de Pedidos
-- Visualização de histórico e detalhes de pedidos.
+- Seleção de endereço
+- Pagamento via **PIX** ou **Cartão de Crédito**
 
-### 👤 Painel do Cliente
-- Edição de dados pessoais.
-- Alteração de senha.
+### 📦 Pedidos
+
+- Histórico de pedidos
+- Detalhamento de cada pedido
+
+### 👤 Área do Cliente
+
+- Edição de perfil
+- Alteração de senha
 
 ## 📊 Diagrama de Caso de Uso
 
-![Diagrama de Caso de Uso](./src/assets/diagramas/Diagrama-de-casos-de-uso-Vendas-Online.png)
+![Diagrama de Caso de
+Uso](./src/assets/diagramas/Diagrama-de-casos-de-uso-Vendas-Online.png)
 
-## 🎨 Protótipo no Figma
+## 🎨 Protótipo (Figma)
 
-Você pode visualizar o protótipo completo no Figma clicando no link abaixo:
-
-🔗 [Abrir no Figma](https://www.figma.com/design/RN03CQdT647qJtUM78c97y/Vendas-Online?node-id=0-1&t=nEpYvF2d7C3v1RsJ-1)
+🔗 **Figma**:\
+https://www.figma.com/design/RN03CQdT647qJtUM78c97y/Vendas-Online?node-id=0-1
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **React Native CLI**: Framework para desenvolvimento mobile.
-- **TypeScript**: Superset do JavaScript com tipagem estática.
-- **Redux Toolkit**: Gerenciamento eficiente de estado global.
-- **Axios**: Cliente HTTP para comunicação com o backend.
-- **React Navigation**: Navegação entre telas.
-- **Styled-components**: Estilização com escopo de componente.
+- **React Native CLI**
+- **TypeScript**
+- **Redux Toolkit**
+- **Axios**
+- **React Navigation**
+- **Styled-components**
+- **React Native Vector Icons**
 
-## 📐 Arquitetura
+## 🧱 Arquitetura
 
-- Estrutura modular por funcionalidades.
-- Navegação organizada com **React Navigation**.
-- Estado global centralizado com **Redux**.
-- Uso de **hooks personalizados** (como `useRequests`) para requisições à API.
-- Organização de código visando legibilidade e manutenibilidade.
+- Módulos por funcionalidade
+- Redux Toolkit para estado global
+- React Navigation para navegação
+- Hooks personalizados (ex: `useRequests`)
+- Organização em:
+  - `/modules`
+  - `/shared/components`
+  - `/shared/services`
+  - `/shared/themes`
 
 ## 🧹 Qualidade de Código
 
-- **ESLint** e **Prettier** para padronização e qualidade.
-- Regras específicas para **TypeScript** e **React Native**.
+- **ESLint**
+- **Prettier**
+- Regras otimizadas para TypeScript e React Native
 
 ## ⚙️ Configuração do Ambiente
 
-Antes de rodar o projeto, você precisa configurar o ambiente React Native.  
-Escolha seu sistema operacional e siga os guias oficiais:
+Configure seu ambiente React Native seguindo o guia oficial:
 
-- 🖥️ [Guia para Windows](https://reactnative.dev/docs/set-up-your-environment?platform=android&os=windows)  
-- 🍏 [Guia para macOS](https://reactnative.dev/docs/set-up-your-environment?platform=ios&os=macos)  
-- 🐧 [Guia para Linux](https://reactnative.dev/docs/set-up-your-environment?platform=android&os=linux)  
+- 🖥️ Windows\
+  https://reactnative.dev/docs/set-up-your-environment?platform=android&os=windows
 
-> 💡 Use **Node.js LTS (18 ou superior)** e **JDK 17** para evitar problemas de compatibilidade.  
-> 💡 No Android Studio, instale o SDK **Android 15 (VanillaIceCream - API 35)** e configure o AVD.
+- 🍏 macOS\
+  https://reactnative.dev/docs/set-up-your-environment?platform=ios&os=macos
 
-## ▶️ Executando o App
+- 🐧 Linux\
+  https://reactnative.dev/docs/set-up-your-environment?platform=android&os=linux
 
-Após configurar o ambiente:
+### 📌 Requisitos recomendados
 
-### 1️⃣ Instale as dependências:
+- **Node.js LTS (18+)**
+- **JDK 17**
+- Android Studio com:
+  - Android 15 (API 35)\
+  - Emulador configurado (AVD)
+
+## ▶️ Como Rodar o Projeto
+
+### 1️⃣ Instalar dependências
+
 ```bash
 npm install
 ```
 
-### 2️⃣ Inicie o app no Android:
+### 2️⃣ Iniciar no Android
+
 ```bash
 npx react-native run-android
 ```
 
-O app será aberto no **emulador** do Android Studio ou em um **dispositivo físico** conectado via USB.  
+O app será aberto no emulador ou no dispositivo conectado via USB.
